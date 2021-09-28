@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "826536014845",
+    "project_id": "love-alarm-531bd",
+    "storage_bucket": "love-alarm-531bd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:826536014845:android:d6ba7524d1dc2103625f94",
+        "android_client_info": {
+          "package_name": "com.comp90018.lovealarm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "826536014845-rsg3nbpt1gr3c5o5o8ksadssr629rr10.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCF-bn8oFD3Fnj1qtvdOi7B77fycKdqTsI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "826536014845-rsg3nbpt1gr3c5o5o8ksadssr629rr10.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
