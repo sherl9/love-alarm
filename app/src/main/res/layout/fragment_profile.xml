@@ -13,25 +13,27 @@
             android:layout_width="243dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
+            android:layout_centerInParent="true"
             android:text="Log Out"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/profileAvatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="70dp"
+            android:layout_marginBottom="36dp"
             app:layout_constraintBottom_toTopOf="@+id/button2"
             app:layout_constraintStart_toStartOf="@+id/button2"
             tools:src="@tools:sample/avatars" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/profileEdit"
             android:layout_width="318dp"
             android:layout_height="48dp"
-            android:layout_marginBottom="56dp"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="40dp"
             android:text="Edit Photo"
             app:layout_constraintBottom_toTopOf="@+id/textView3"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,9 +42,11 @@
 
         <TextView
             android:id="@+id/textView1"
-            android:layout_width="127dp"
+            android:layout_width="162dp"
             android:layout_height="40dp"
-            android:layout_marginBottom="90dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="60dp"
+            android:gravity="center_vertical"
             android:text="Name"
             app:layout_constraintBottom_toTopOf="@+id/button2"
             app:layout_constraintEnd_toEndOf="@+id/button2" />
@@ -53,6 +57,8 @@
             android:layout_height="47dp"
             android:layout_marginBottom="16dp"
             android:text="In Relationship"
+            android:gravity="center"
+            android:layout_centerInParent="true"
             app:layout_constraintBottom_toTopOf="@+id/imageView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -66,6 +72,7 @@
             app:layout_constraintBottom_toTopOf="@+id/textView5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:layout_centerInParent="true"
             tools:ignore="MissingConstraints" />
 
         <TextView
@@ -73,7 +80,9 @@
             android:layout_width="98dp"
             android:layout_height="45dp"
             android:layout_marginBottom="24dp"
+            android:layout_centerInParent="true"
             android:text="YES"
+            android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
