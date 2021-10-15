@@ -37,6 +37,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class ProfileFragment extends Fragment {
@@ -45,9 +46,15 @@ public class ProfileFragment extends Fragment {
     public static final int GALLERY_REQUEST_CODE = 105;
 
     ImageView avatarImage;
-    TextView editButton;
-    TextView dateView;
-    DatePickerDialog datePicker;
+
+    ImageView editNameButton;
+    ImageView editDOBButton;
+    ImageView editBioButton;
+    TextView editPicButton;
+
+    DatePickerDialog picker;
+    TextView dobView;
+
     String currentPhotoPath;
 
     public ProfileFragment() {
@@ -64,23 +71,40 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        avatarImage = view.findViewById(R.id.profileAvatar);
-        editButton = view.findViewById(R.id.editPicture);
-//        datePicker = view.findViewById(R.id.profileDatePicker);
-        dateView = view.findViewById(R.id.profileDOBField);
-        dateView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
+        avatarImage = view.findViewById(R.id.profileAvatar);
+        dobView = view.findViewById(R.id.profileDOBField);
+        editNameButton = view.findViewById(R.id.profileEditName);
+        editDOBButton = view.findViewById(R.id.profileEditDOB);
+        editBioButton = view.findViewById(R.id.profileEditBio);
+        editPicButton = view.findViewById(R.id.profileEditPictureButton);
+
+        editDOBButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                picker = new DatePickerDialog(getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                dobView.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            }
+                        }, year, month, day);
+                picker.show();
             }
         });
 
-        editButton.setOnClickListener(new View.OnClickListener() {
+        editPicButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showBottomSheetDialog();
             }
         });
+
+
     }
 
     private void showBottomSheetDialog(){
@@ -88,7 +112,6 @@ public class ProfileFragment extends Fragment {
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_dialog_profile);
         LinearLayout camera = bottomSheetDialog.findViewById(R.id.cameraLinearLayout);
         LinearLayout gallery = bottomSheetDialog.findViewById(R.id.galleryLinearLayout);
-
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,11 +119,9 @@ public class ProfileFragment extends Fragment {
                 bottomSheetDialog.dismiss();
             }
         });
-
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "Copy is Clicked ", Toast.LENGTH_LONG).show();
                 Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(gallery, GALLERY_REQUEST_CODE);
                 bottomSheetDialog.dismiss();
@@ -131,19 +152,14 @@ public class ProfileFragment extends Fragment {
     }
 
     private void openCamera(){
-//        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        startActivityForResult(camera, CAMERA_REQUEST_CODE);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Create the File where the photo should go
             File photoFile = null;
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
             }
-            // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(getActivity(),
                         "com.comp90018.android.fileprovider",
@@ -182,7 +198,6 @@ public class ProfileFragment extends Fragment {
     }
 
     private File createImageFile() throws IOException {
-        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -192,18 +207,15 @@ public class ProfileFragment extends Fragment {
                 storageDir      /* directory */
         );
 
-        // Save a file: path for use with ACTION_VIEW intents
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(currentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        getActivity().sendBroadcast(mediaScanIntent);
-    }
-
-
+//    private void galleryAddPic() {
+//        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+//        File f = new File(currentPhotoPath);
+//        Uri contentUri = Uri.fromFile(f);
+//        mediaScanIntent.setData(contentUri);
+//        getActivity().sendBroadcast(mediaScanIntent);
+//    }
 }

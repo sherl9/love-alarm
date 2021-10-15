@@ -12,7 +12,7 @@
             android:id="@+id/profileAvatar"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:layout_marginTop="92dp"
+            android:layout_marginTop="136dp"
             android:src="@drawable/ic_camera"
             app:civ_border_color="#FF000000"
             app:civ_border_width="0dp"
@@ -27,11 +27,11 @@
             android:layout_width="105dp"
             android:layout_height="41dp"
             android:layout_marginStart="56dp"
-            android:layout_marginTop="48dp"
-            android:fontFamily="sans-serif-thin"
+            android:layout_marginTop="60dp"
+            android:fontFamily="sans-serif-light"
             android:gravity="center_vertical"
             android:text="Name"
-            android:textSize="16sp"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
@@ -41,10 +41,10 @@
             android:layout_width="106dp"
             android:layout_height="41dp"
             android:layout_marginTop="24dp"
-            android:fontFamily="sans-serif-thin"
+            android:fontFamily="sans-serif-light"
             android:gravity="center_vertical"
             android:text="Date of Birth"
-            android:textSize="16sp"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@+id/profileNameLabel"
             app:layout_constraintTop_toBottomOf="@+id/profileNameLabel" />
 
@@ -54,10 +54,10 @@
             android:layout_width="106dp"
             android:layout_height="41dp"
             android:layout_marginTop="24dp"
-            android:fontFamily="sans-serif-thin"
+            android:fontFamily="sans-serif-light"
             android:gravity="center_vertical"
             android:text="Bio"
-            android:textSize="16sp"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="@+id/profileDOBLabel"
             app:layout_constraintStart_toStartOf="@+id/profileDOBLabel"
             app:layout_constraintTop_toBottomOf="@+id/profileDOBLabel" />
@@ -66,13 +66,13 @@
             android:id="@+id/profileDOBField"
             android:layout_width="130dp"
             android:layout_height="40dp"
-            android:text="12/13/19"
-            android:hint="My hint"
-            android:textSize="16sp"
-            android:textColor="?attr/editTextColor"
             android:background="?attr/editTextBackground"
             android:gravity="center_vertical"
+            android:hint="My hint"
+            android:text="12/13/19"
             android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:textColor="?attr/editTextColor"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/profileDOBLabel"
             app:layout_constraintEnd_toEndOf="@+id/profileNameField"
             app:layout_constraintHorizontal_bias="1.0"
@@ -80,32 +80,38 @@
             app:layout_constraintTop_toTopOf="@+id/profileDOBLabel"
             app:layout_constraintVertical_bias="0.0" />
 
-        <EditText
+        <TextView
             android:id="@+id/profileNameField"
             android:layout_width="130dp"
             android:layout_height="38dp"
-            android:layout_marginEnd="56dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="60dp"
+            android:background="?attr/editTextBackground"
             android:ems="10"
             android:gravity="center_vertical"
-            android:inputType="textPersonName"
+            android:hint="My hint"
             android:text="Joe Don"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:textColor="?attr/editTextColor"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/profileNameLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/profileNameLabel"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <View
             android:id="@+id/divider"
             android:layout_width="409dp"
             android:layout_height="1dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="36dp"
             android:background="?android:attr/listDivider"
-            app:layout_constraintTop_toBottomOf="@+id/editPicture"
-            tools:layout_editor_absoluteX="1dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profileEditPictureButton" />
 
         <TextView
-            android:id="@+id/editPicture"
+            android:id="@+id/profileEditPictureButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -116,27 +122,49 @@
             app:layout_constraintStart_toStartOf="@+id/profileAvatar"
             app:layout_constraintTop_toBottomOf="@+id/profileAvatar" />
 
-        <EditText
+        <TextView
             android:id="@+id/profileBioField"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="?attr/editTextBackground"
             android:ems="10"
             android:gravity="start|top"
-            android:inputType="textMultiLine"
-            app:layout_constraintEnd_toEndOf="@+id/profileDOBField"
-            app:layout_constraintHorizontal_bias="0.482"
-            app:layout_constraintStart_toStartOf="@+id/profileDOBLabel"
+            android:hint="My hint"
+            android:text="This is a bio"
+            android:textAppearance="?android:attr/textAppearanceMediumInverse"
+            android:textColor="?attr/editTextColor"
+            android:textSize="16sp"
+
+            app:layout_constraintEnd_toStartOf="@+id/profileEditBio"
+            app:layout_constraintStart_toStartOf="@+id/profileBioLabel"
             app:layout_constraintTop_toBottomOf="@+id/profileBioLabel" />
 
-        <Button
-            android:id="@+id/profileSaveButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:text="Save"
-            app:layout_constraintEnd_toEndOf="@+id/profileBioField"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="@+id/profileBioField"
-            app:layout_constraintTop_toBottomOf="@+id/profileBioField" />
+        <ImageView
+            android:id="@+id/profileEditName"
+            android:layout_width="19dp"
+            android:layout_height="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/profileNameField"
+            app:layout_constraintStart_toEndOf="@+id/profileNameField"
+            app:layout_constraintTop_toTopOf="@+id/profileNameField"
+            app:layout_constraintVertical_bias="0.444"
+            app:srcCompat="@drawable/ic_edit" />
+
+        <ImageView
+            android:id="@+id/profileEditDOB"
+            android:layout_width="19dp"
+            android:layout_height="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/profileDOBField"
+            app:layout_constraintStart_toEndOf="@+id/profileDOBField"
+            app:layout_constraintTop_toTopOf="@+id/profileDOBField"
+            app:srcCompat="@drawable/ic_edit" />
+
+        <ImageView
+            android:id="@+id/profileEditBio"
+            android:layout_width="19dp"
+            android:layout_height="20dp"
+            app:layout_constraintBottom_toBottomOf="@+id/profileBioField"
+            app:layout_constraintEnd_toEndOf="@+id/profileEditDOB"
+            app:layout_constraintTop_toTopOf="@+id/profileBioField"
+            app:srcCompat="@drawable/ic_edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
