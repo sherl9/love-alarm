@@ -2,11 +2,12 @@ package com.comp90018.lovealarm.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -19,13 +20,14 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -58,7 +60,8 @@ public class ProfileFragment extends Fragment {
     DatePickerDialog picker;
 
     TextView dobField;
-    TextView bioFeild;
+    TextView nameField;
+    TextView bioField;
     String currentPhotoPath;
 
     public ProfileFragment() {
@@ -68,7 +71,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -76,11 +78,27 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         avatarImage = view.findViewById(R.id.profileAvatar);
-        dobView = view.findViewById(R.id.profileDOBField);
+        dobField = view.findViewById(R.id.profileDOBField);
         editNameButton = view.findViewById(R.id.profileEditName);
         editDOBButton = view.findViewById(R.id.profileEditDOB);
         editBioButton = view.findViewById(R.id.profileEditBio);
         editPicButton = view.findViewById(R.id.profileEditPictureButton);
+        nameField = view.findViewById(R.id.profileNameField);
+        bioField = view.findViewById(R.id.profileBioField);
+
+        editNameButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                showDialog(DialogType.NAME);
+            }
+        });
+
+        editBioButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                showDialog(DialogType.BIO);
+            }
+        });
 
         editDOBButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +111,7 @@ public class ProfileFragment extends Fragment {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                dobView.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                dobField.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                             }
                         }, year, month, day);
                 picker.show();
@@ -106,18 +124,40 @@ public class ProfileFragment extends Fragment {
                 showBottomSheetDialog();
             }
         });
+
+
     }
 
     private void showDialog(DialogType type){
-        TextView targetView = null;
-        switch (type) {
-            DialogType.NAME:
-                targetView =
-                break;
-            DialogType.BIO:
-                targetView =
-        }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        input.setText(type == DialogType.NAME ? nameField.getText().toString() : bioField.getText().toString());
+        builder.setView(input);
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(type == DialogType.NAME){
+                    nameField.setText(input.getText().toString());
+                } else {
+                    bioField.setText(input.getText().toString());
+                }
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.setTitle(type.toString());
+        alert.show();
     }
 
     private void showBottomSheetDialog(){
