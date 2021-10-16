@@ -45,16 +45,20 @@ public class ProfileFragment extends Fragment {
     public static final int CAMERA_REQUEST_CODE = 102;
     public static final int GALLERY_REQUEST_CODE = 105;
 
-    ImageView avatarImage;
+    enum DialogType {
+        NAME,
+        BIO
+    }
 
+    ImageView avatarImage;
     ImageView editNameButton;
     ImageView editDOBButton;
     ImageView editBioButton;
     TextView editPicButton;
-
     DatePickerDialog picker;
-    TextView dobView;
 
+    TextView dobField;
+    TextView bioFeild;
     String currentPhotoPath;
 
     public ProfileFragment() {
@@ -71,7 +75,6 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         avatarImage = view.findViewById(R.id.profileAvatar);
         dobView = view.findViewById(R.id.profileDOBField);
         editNameButton = view.findViewById(R.id.profileEditName);
@@ -103,7 +106,17 @@ public class ProfileFragment extends Fragment {
                 showBottomSheetDialog();
             }
         });
+    }
 
+    private void showDialog(DialogType type){
+        TextView targetView = null;
+        switch (type) {
+            DialogType.NAME:
+                targetView =
+                break;
+            DialogType.BIO:
+                targetView =
+        }
 
     }
 
