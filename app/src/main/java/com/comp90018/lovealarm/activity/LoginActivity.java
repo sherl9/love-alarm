@@ -25,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
     // Firebase:
     FirebaseAuth auth;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,25 +58,25 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(i);
                 finish();
 
-//                // Checking if it is empty
-//                if (TextUtils.isEmpty(email_text) || TextUtils.isEmpty(pass_text)) {
-//                    Toast.makeText(LoginActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    auth.signInWithEmailAndPassword(email_text, pass_text)
-//                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<AuthResult> task) {
-//                                    if (task.isSuccessful()) {
-//                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
-//                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//                                        startActivity(i);
-//                                        finish();
-//                                    } else {
-//                                        Toast.makeText(LoginActivity.this, "Login Failed!", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }
-//                            });
-//                }
+                // Checking if it is empty
+                if (TextUtils.isEmpty(email_text) || TextUtils.isEmpty(pass_text)) {
+                    Toast.makeText(LoginActivity.this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+                } else {
+                    auth.signInWithEmailAndPassword(email_text, pass_text)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(i);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(LoginActivity.this, "Login Failed!", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
             }
         });
 
