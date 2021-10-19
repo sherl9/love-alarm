@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,12 @@ public class ContactsFragment extends Fragment {
         recyclerView.setAdapter(contactsAdapter);
 
         searchEdittext = view.findViewById(R.id.search_edit_text);
+        searchEdittext.setOnKeyListener((v, i, keyEvent) -> {
+            if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                doSearch();
+            }
+            return false;
+        });
 
         searchLocal = view.findViewById(R.id.contacts_search_button);
         searchLocal.setOnClickListener(v -> doSearch());
