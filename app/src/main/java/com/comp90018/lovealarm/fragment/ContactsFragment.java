@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,17 @@ import android.view.ViewGroup;
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
 import com.comp90018.lovealarm.model.User;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsFragment extends Fragment {
+    private TextInputEditText searchEdittext;
+    private View searchLocal;
     private RecyclerView recyclerView;
+
+    private ContactsAdapter contactsAdapter;
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -36,11 +42,38 @@ public class ContactsFragment extends Fragment {
             contactsList.add(new User("000", "user - " + i, "test@test.com"));
         }
 
-        ContactsAdapter adapter = new ContactsAdapter(contactsList);
+        contactsAdapter = new ContactsAdapter(contactsList);
+
         recyclerView = view.findViewById(R.id.recycler_contacts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(contactsAdapter);
+
+        searchEdittext = view.findViewById(R.id.search_edit_text);
+
+        searchLocal = view.findViewById(R.id.contacts_search_button);
+        searchLocal.setOnClickListener(v -> doSearch());
 
         return view;
+    }
+
+    private void doSearch() {
+        Editable text = searchEdittext.getText();
+        if (text == null || text.length() == 0) {
+            if (contactsAdapter.getContacts() != contactsAdapter.getList()) {
+                contactsAdapter.getList().clear();
+                contactsAdapter.setList(contactsAdapter.getContacts());
+            }
+        } else {
+            String keyword = text.toString();
+            List<User> contacts = contactsAdapter.getContacts();
+            List<User> result = new ArrayList<>();
+            for (User user : contacts) {
+                if (user.getUsername().contains(keyword)) {
+                    result.add(user);
+                }
+            }
+            contactsAdapter.setList(result);
+        }
+        recyclerView.setAdapter(contactsAdapter);
     }
 }
