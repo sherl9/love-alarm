@@ -75,7 +75,7 @@ public class ContactsFragment extends Fragment {
             List<User> contacts = contactsAdapter.getContacts();
             List<User> result = new ArrayList<>();
             for (User user : contacts) {
-                if (user.getUsername().contains(keyword)) {
+                if (user.getUserName().contains(keyword)) {
                     result.add(user);
                 }
             }
