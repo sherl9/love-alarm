@@ -88,7 +88,6 @@ public class RegisterActivity extends AppCompatActivity {
                                     }
                                 }
                             });
-
                         } else {
                             Toast.makeText(RegisterActivity.this, "Invalid Email or Password", Toast.LENGTH_SHORT).show();
                         }
