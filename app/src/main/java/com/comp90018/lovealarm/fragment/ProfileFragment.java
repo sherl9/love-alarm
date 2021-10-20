@@ -9,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -80,6 +81,7 @@ public class ProfileFragment extends Fragment {
     DatabaseReference dbReference;
     String userId;
     FirebaseUser user;
+    ImageView logoutButton;
     private User currentUser;
 
     public ProfileFragment() {
@@ -106,11 +108,11 @@ public class ProfileFragment extends Fragment {
         editPicButton = view.findViewById(R.id.profileEditPictureButton);
         nameField = view.findViewById(R.id.profileNameField);
         bioField = view.findViewById(R.id.profileBioField);
+        logoutButton = view.findViewById(R.id.profileLogout);
 
         // Connect firebase storage
         dbReference = FirebaseDatabase.getInstance().getReference();
         storageReference = FirebaseStorage.getInstance().getReference();
-
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user == null) {
@@ -123,6 +125,30 @@ public class ProfileFragment extends Fragment {
         pb = new ProgressDialog(getActivity());
         pb.setTitle("Updating");
         pb.setMessage("Wait while updating avatar...");
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        startActivity(intent);
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+                AlertDialog alert = builder.create();
+                alert.setTitle("Logout");
+                alert.setMessage("Are you sure to logout?");
+                alert.show();
+            }
+        });
 
         editNameButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,7 +177,6 @@ public class ProfileFragment extends Fragment {
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                                 currentUser.setDob(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                                 updateUserData();
-//                                dobField.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                             }
                         }, year, month, day);
                 picker.show();
@@ -165,20 +190,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-//        ValueEventListener postListener = new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // Get Post object and use the values to update the UI
-//                currentUser = dataSnapshot.getValue(User.class);
-//                updateUI();
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                // Getting Post failed, log a message
-//                Log.w("firebase", "loadPost:onCancelled", databaseError.toException());
-//            }
-//        };
-//        dbReference.addValueEventListener(postListener);
     }
 
     private void updateUI() {
@@ -227,6 +238,7 @@ public class ProfileFragment extends Fragment {
             }
         });
     }
+
 
     private void showAuthDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
