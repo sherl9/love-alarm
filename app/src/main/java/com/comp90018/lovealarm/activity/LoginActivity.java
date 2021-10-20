@@ -53,10 +53,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email_text = userETLogin.getText().toString();
                 String pass_text = passETLogin.getText().toString();
-                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-                finish();
 
                 // Checking if it is empty
                 if (TextUtils.isEmpty(email_text) || TextUtils.isEmpty(pass_text)) {
@@ -72,13 +68,12 @@ public class LoginActivity extends AppCompatActivity {
                                         startActivity(i);
                                         finish();
                                     } else {
-                                        Toast.makeText(LoginActivity.this, "Login Failed!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, "Logn failed", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                 }
             }
         });
-
     }
 }
