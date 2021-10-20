@@ -63,7 +63,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.text.setText(list.get(position).getUsername());
+        holder.text.setText(list.get(position).getUserName());
         // TODO: Change image
         holder.icon.setImageResource(R.drawable.ic_heart);
     }
