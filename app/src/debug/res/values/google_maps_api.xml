@@ -1,0 +1,24 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=14:E4:83:2F:5C:F2:E3:8A:8E:9A:B5:45:A6:01:78:D0:3B:26:27:B6%3Bcom.comp90018.lovealarm.fragment
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    com.comp90018.lovealarm.fragment
+
+    SHA-1 certificate fingerprint:
+    14:E4:83:2F:5C:F2:E3:8A:8E:9A:B5:45:A6:01:78:D0:3B:26:27:B6
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyAx86BmAimhbsfaS-KJ24hv8PSHIyfdRF8</string>
+</resources>
