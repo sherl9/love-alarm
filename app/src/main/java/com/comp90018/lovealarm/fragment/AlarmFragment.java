@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Context;
@@ -19,7 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.model.Coordinate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -51,6 +54,10 @@ public class AlarmFragment extends Fragment {
     private GoogleMap mMap;
     private DatabaseReference databaseReference;
 
+    LottieAnimationView lav_heart_origin;
+    LottieAnimationView lav_heart_activated;
+    TextView tv_fansNum;
+
     private LocationListener locationListener;
     private LocationManager locationManager;
     private final long MIN_TIME = 1000;
@@ -80,9 +87,6 @@ public class AlarmFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
-//            LatLng sydney = new LatLng(-34, 151);
-//            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
             locationListener = new LocationListener() {
                 @Override
@@ -92,17 +96,13 @@ public class AlarmFragment extends Fragment {
                         userLocation.setLongitude(location.getLongitude());
                         databaseReference.child(userId).setValue(userLocation);
 
-//                        LatLng latLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
-//                        mMap.clear();
-//                        mMap.addMarker(new MarkerOptions().position(latLng).title(user.getDisplayName()));
-//                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             };
 
-            locationManager = (LocationManager) Objects.requireNonNull(getActivity()).getSystemService(Context.LOCATION_SERVICE);
+            locationManager = (LocationManager) requireActivity().getSystemService(Context.LOCATION_SERVICE);
 
             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
@@ -141,6 +141,15 @@ public class AlarmFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+        ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+
+        lav_heart_origin = view.findViewById(R.id.heart_origin);
+        lav_heart_activated = view.findViewById(R.id.heart_activated);
+        tv_fansNum = view.findViewById(R.id.fans_num);
+
+        lav_heart_origin.setVisibility(View.VISIBLE);
+        lav_heart_activated.setVisibility(View.INVISIBLE);
+        mapFragment.getView().setVisibility(View.GONE);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
@@ -148,7 +157,6 @@ public class AlarmFragment extends Fragment {
         fansLocations = new ArrayList<>();
         closeFansLocations = new ArrayList<>();
 
-        ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()), new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
         databaseReference = FirebaseDatabase.getInstance().getReference("Location");
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -163,6 +171,7 @@ public class AlarmFragment extends Fragment {
 
                     // set markers in map
                     mMap.clear();
+                    closeFansLocations.clear();
                     for (Coordinate coordinate : fansLocations) {
                         LatLng latLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
                         if(coordinate.getUserId().equals(userId)) {
@@ -175,7 +184,17 @@ public class AlarmFragment extends Fragment {
                         }
                     }
 
-                    Log.i(TAG, "onDataChange: nearby fans number: " + closeFansLocations.size());
+                    int fansNum = closeFansLocations.size();
+                    Log.i(TAG, "onDataChange: nearby fans number: " + fansNum);
+
+                    tv_fansNum.setText(fansNum+"");
+                    if (closeFansLocations.size()>0) {
+                        lav_heart_origin.setVisibility(View.INVISIBLE);
+                        lav_heart_activated.setVisibility(View.VISIBLE);
+                    } else {
+                        lav_heart_origin.setVisibility(View.VISIBLE);
+                        lav_heart_activated.setVisibility(View.INVISIBLE);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
