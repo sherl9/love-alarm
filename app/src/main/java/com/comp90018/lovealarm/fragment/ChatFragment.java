@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.comp90018.lovealarm.R;
+import com.comp90018.lovealarm.adapters.ChatAdapter;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
 import com.comp90018.lovealarm.model.ChatList;
 import com.comp90018.lovealarm.model.User;
@@ -29,13 +30,15 @@ import java.util.List;
 
 public class ChatFragment extends Fragment {
 
-    private ContactsAdapter contactsAdapter;
+    //private ContactsAdapter contactsAdapter;
+    private ChatAdapter chatAdapter;
     private List<User> allUser;
 
     FirebaseUser fuser;
     DatabaseReference reference;
 
-    private List<ChatList> chatLists;
+    //private List<ChatList> chatLists;
+    private List<ChatList> allChatList;
 
     RecyclerView recyclerView;
 
@@ -58,18 +61,18 @@ public class ChatFragment extends Fragment {
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
-        chatLists = new ArrayList<>();
+        allChatList = new ArrayList<>();
 
         reference = FirebaseDatabase.getInstance().getReference("ChatList").child(fuser.getUid());
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                chatLists.clear();
+                allChatList.clear();
                 // loop for all chat list
                 for (DataSnapshot childSnapshot : snapshot.getChildren()){
                     ChatList chat = childSnapshot.getValue(ChatList.class);
-                    chatLists.add(chat);
+                    allChatList.add(chat);
                 }
                 chatList();
             }
@@ -94,14 +97,14 @@ public class ChatFragment extends Fragment {
                 allUser.clear();
                 for (DataSnapshot childSnapshot : snapshot.getChildren()){
                     User user = childSnapshot.getValue(User.class);
-                    for (ChatList chat: chatLists){
+                    for (ChatList chat: allChatList){
                         if (user.getUserId().equals(chat.getId())){
                             allUser.add(user);
                         }
                     }
                 }
-                contactsAdapter = new ContactsAdapter(getContext(), allUser);
-                recyclerView.setAdapter(contactsAdapter);
+                chatAdapter = new ChatAdapter(getContext(), allUser, allChatList);
+                recyclerView.setAdapter(chatAdapter);
             }
 
             @Override
