@@ -32,6 +32,9 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".activity.MessageActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.RegisterActivity"
             android:exported="true" />
         <activity
