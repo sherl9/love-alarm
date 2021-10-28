@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.lovealarm.R;
-import com.comp90018.lovealarm.activity.MessageActivity;
+import com.comp90018.lovealarm.activity.ContactProfileActivity;
 import com.comp90018.lovealarm.model.User;
 
 import java.util.ArrayList;
@@ -64,8 +64,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         holder.icon.setImageResource(R.drawable.ic_heart);
 
         holder.itemView.setOnClickListener(view -> {
-            Intent i = new Intent(context, MessageActivity.class);
-            i.putExtra("userid", user.getUserId());
+            Intent i = new Intent(context, ContactProfileActivity.class);
+            i.putExtra(ContactProfileActivity.KEY_USERID, user.getUserId());
+            i.putExtra(ContactProfileActivity.KEY_USERNAME, user.getUserName());
             context.startActivity(i);
         });
     }
