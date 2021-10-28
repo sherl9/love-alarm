@@ -25,9 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ContactsFragment extends Fragment {
     private TextInputEditText searchEdittext;
     private View searchLocal;
@@ -96,23 +93,19 @@ public class ContactsFragment extends Fragment {
     }
 
     private void doSearch() {
+        contactsAdapter.getList().clear();
         Editable text = searchEdittext.getText();
+
         if (text == null || text.length() == 0) {
-            if (contactsAdapter.getContactList() != contactsAdapter.getList()) {
-                contactsAdapter.getList().clear();
-                contactsAdapter.setList(contactsAdapter.getContactList());
-            }
+            contactsAdapter.getList().addAll(contactsAdapter.getContactList());
         } else {
-            String keyword = text.toString();
-            List<User> contacts = contactsAdapter.getContactList();
-            List<User> result = new ArrayList<>();
-            for (User user : contacts) {
-                if (user.getUserName().contains(keyword)) {
-                    result.add(user);
+            for (User user : contactsAdapter.getContactList()) {
+                if (user.getUserName().contains(text.toString())) {
+                    contactsAdapter.getList().add(user);
                 }
             }
-            contactsAdapter.setList(result);
         }
+
         recyclerView.setAdapter(contactsAdapter);
     }
 }
