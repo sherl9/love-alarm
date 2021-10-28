@@ -6,10 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.comp90018.lovealarm.AudioRecorder;
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.adapters.MessageAdapter;
 import com.comp90018.lovealarm.model.Chat;
 import com.comp90018.lovealarm.model.User;
+import com.devlomi.record_view.OnBasketAnimationEnd;
+import com.devlomi.record_view.OnRecordClickListener;
+import com.devlomi.record_view.OnRecordListener;
+import com.devlomi.record_view.RecordButton;
+import com.devlomi.record_view.RecordView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.util.Log;
@@ -32,11 +39,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -55,6 +64,9 @@ public class MessageActivity extends AppCompatActivity {
     List<Chat> allChat;
     String userid;
 
+    private AudioRecorder audioRecorder;
+    private File recordFile;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +78,68 @@ public class MessageActivity extends AppCompatActivity {
         sendBtn = findViewById(R.id.btn_send);
         msgEditText = findViewById(R.id.text_send);
 
-        // go back
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // voice recorder
+        audioRecorder = new AudioRecorder();
+        RecordView recordView = (RecordView) findViewById(R.id.record_view);
+        final RecordButton recordButton = (RecordButton) findViewById(R.id.record_button);
+
+        recordButton.setRecordView(recordView);
+        recordButton.setListenForRecord(true);
+
+        recordButton.setOnRecordClickListener(new OnRecordClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MessageActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
+                Log.d("RecordButton", "RECORD BUTTON CLICKED");
+            }
+        });
+
+        //Cancel Bounds is when the Slide To Cancel text gets before the timer . default is 8
+        recordView.setCancelBounds(8);
+        recordView.setSmallMicColor(Color.parseColor("#c2185b"));
+
+        //prevent recording under one Second
+        recordView.setLessThanSecondAllowed(false);
+        recordView.setSlideToCancelText("Slide To Cancel");
+        recordView.setCustomSounds(R.raw.record_start, R.raw.record_finished, 0);
+        recordView.setOnRecordListener(new OnRecordListener() {
+            @Override
+            public void onStart() {
+                //Start Recording..
+                Log.d("RecordView", "onStart");
+            }
+
+            @Override
+            public void onCancel() {
+                //On Swipe To Cancel
+                Log.d("RecordView", "onCancel");
+
+            }
+
+            @Override
+            public void onFinish(long recordTime) {
+                //Stop Recording..
+                //limitReached to determine if the Record was finished when time limit reached.
+                String time = getHumanTimeText(recordTime);
+                Log.d("RecordView", "onFinish");
+
+                Log.d("RecordTime", time);
+            }
+
+            @Override
+            public void onLessThanSecond() {
+                //When the record time is less than One Second
+                Log.d("RecordView", "onLessThanSecond");
+            }
+        });
+
+
+        recordView.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                Log.d("RecordView", "Basket Animation Finished");
+            }
+        });
 
 
         // RecyclerView
@@ -207,6 +279,13 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private String getHumanTimeText(long milliseconds) {
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(milliseconds),
+                TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
     }
 
 
