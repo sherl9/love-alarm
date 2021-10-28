@@ -100,7 +100,7 @@ public class ContactsFragment extends Fragment {
             contactsAdapter.getList().addAll(contactsAdapter.getContactList());
         } else {
             for (User user : contactsAdapter.getContactList()) {
-                if (user.getUserName().contains(text.toString())) {
+                if (user.getUserName().toLowerCase().contains(text.toString().toLowerCase())) {
                     contactsAdapter.getList().add(user);
                 }
             }
