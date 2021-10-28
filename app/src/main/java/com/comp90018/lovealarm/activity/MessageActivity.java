@@ -144,6 +144,8 @@ public class MessageActivity extends AppCompatActivity {
                 if (!snapshot.exists()){
                     chatRef.child("id").setValue(userid);
                 }
+                chatRef.child("lastMessage").setValue(message);
+                chatRef.child("date").setValue(date);
             }
 
             @Override
@@ -161,6 +163,8 @@ public class MessageActivity extends AppCompatActivity {
                 if (!snapshot.exists()){
                     chatRef2.child("id").setValue(fuser.getUid());
                 }
+                chatRef2.child("lastMessage").setValue(message);
+                chatRef2.child("date").setValue(date);
             }
 
             @Override
