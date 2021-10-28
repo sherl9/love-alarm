@@ -58,7 +58,7 @@
         app:layout_constraintTop_toBottomOf="@+id/heart_activated" />
 
     <TextView
-        android:id="@+id/fans_num"
+        android:id="@+id/admirers_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
