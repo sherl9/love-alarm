@@ -41,13 +41,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         this.context = context;
     }
 
-    // TODO remove this constructor
-    public ContactsAdapter(Context context, List<User> contactList) {
-        this.contactList = contactList;
-        this.list = contactList;
-        this.context = context;
-    }
-
     public List<User> getContactList() {
         return contactList;
     }
