@@ -75,20 +75,16 @@ public class ContactsFragment extends Fragment {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<User> contactList = contactsAdapter.getContactList();
-
-                contactList.clear();
+                contactsAdapter.getContactList().clear();
                 for (DataSnapshot snapshotChild : snapshot.getChildren()) {
                     User user = snapshotChild.getValue(User.class);
                     if (user != null && !currentUser.getUid().equals(user.getUserId())) {
-                        contactList.add(user);
+                        contactsAdapter.getContactList().add(user);
                     }
                 }
 
-                if (contactsAdapter.getContactList() != contactsAdapter.getList()) {
-                    contactsAdapter.getList().clear();
-                    contactsAdapter.setList(contactList);
-                }
+                contactsAdapter.getList().clear();
+                contactsAdapter.getList().addAll(contactsAdapter.getContactList());
                 recyclerView.setAdapter(contactsAdapter);
             }
 
