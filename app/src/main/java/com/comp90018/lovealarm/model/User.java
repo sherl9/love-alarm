@@ -19,12 +19,8 @@ public class User {
     private String avatarName = "";
     private String bio = "";
     private String dob = "";
-<<<<<<< Updated upstream
     private String alertUserId = "";
     private List<String> admirerIdList = new ArrayList<>();
-=======
-    private List<String> admirerIds;
->>>>>>> Stashed changes
 
     public User(String userId, String userName, String email, String avatarName, String bio, String dob) {
         this.userId = userId;
@@ -33,7 +29,6 @@ public class User {
         this.avatarName = avatarName;
         this.bio = bio;
         this.dob = dob;
-        this.admirerIds = new ArrayList<>();;
     }
 
     public User() {
@@ -97,7 +92,6 @@ public class User {
         this.avatarName = avatarURL;
     }
 
-<<<<<<< Updated upstream
     public String getAlertUserId() {
         return alertUserId;
     }
@@ -112,14 +106,6 @@ public class User {
 
     public void setAdmirerIdList(List<String> admirerIdList) {
         this.admirerIdList = admirerIdList;
-=======
-    public List<String> getAdmirerIds() {
-        return admirerIds;
-    }
-
-    public void setAdmirerIds(List<String> admirerIds) {
-        this.admirerIds = admirerIds;
->>>>>>> Stashed changes
     }
 
     @Exclude
