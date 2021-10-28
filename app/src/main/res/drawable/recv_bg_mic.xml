@@ -2,14 +2,14 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <corners android:radius="0dp" />
-    <solid android:color="#F6CFC8" />
+    <solid android:color="#FBB8AC" />
     <padding
         android:bottom="0dp"
         android:left="0dp"
         android:right="0dp"
         android:top="0dp" />
     <size
-        android:width="50dp"
-        android:height="50dp" />
+        android:width="40dp"
+        android:height="40dp" />
 
 </shape>

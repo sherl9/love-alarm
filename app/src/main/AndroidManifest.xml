@@ -18,7 +18,9 @@
         android:roundIcon="@mipmap/ic_launcher_heart_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp">
-
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/actions" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

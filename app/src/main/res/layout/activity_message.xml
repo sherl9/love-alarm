@@ -71,10 +71,24 @@
             android:id="@+id/btn_send"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
+
+            android:layout_toLeftOf="@+id/record_button"
             android:background="@drawable/ic_send"
             tools:ignore="SpeakableTextPresentCheck" />
+
+        <com.devlomi.record_view.RecordButton
+            android:id="@+id/record_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/recv_bg_mic"
+            android:scaleType="centerInside"
+            app:mic_icon="@drawable/recv_ic_mic_white"
+            tools:ignore="MissingConstraints" />
 
 
     </RelativeLayout>
