@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.comp90018.lovealarm">
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_heart"
@@ -9,6 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_heart_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp">
+        <activity
+            android:name=".activity.MessageActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.RegisterActivity"
             android:exported="true" />
@@ -22,7 +27,8 @@
         </activity>
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.comp90018.android.fileprovider"
@@ -30,8 +36,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
     </application>
-    <uses-permission android:name="android.permission.CAMERA" />
+
 </manifest>

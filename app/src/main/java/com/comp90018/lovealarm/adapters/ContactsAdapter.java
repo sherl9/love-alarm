@@ -1,5 +1,7 @@
 package com.comp90018.lovealarm.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.lovealarm.R;
+import com.comp90018.lovealarm.activity.MessageActivity;
 import com.comp90018.lovealarm.model.User;
 
 import java.util.List;
@@ -24,26 +27,21 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             super(itemView);
             icon = itemView.findViewById(R.id.contact_avatar);
             text = itemView.findViewById(R.id.contact_name);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                }
-            });
         }
     }
 
-    private final List<User> contacts;
+    private final List<User> contactList;
     private List<User> list;
+    private Context context;
 
-    public ContactsAdapter(List<User> contacts) {
-        this.contacts = contacts;
-        this.list = contacts;
+    public ContactsAdapter(Context context, List<User> contactList) {
+        this.contactList = contactList;
+        this.list = contactList;
+        this.context = context;
     }
 
-    public List<User> getContacts() {
-        return contacts;
+    public List<User> getContactList() {
+        return contactList;
     }
 
     public List<User> getList() {
@@ -63,9 +61,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.text.setText(list.get(position).getUserName());
+        User user = list.get(position);
+        holder.text.setText(user.getUserName());
         // TODO: Change image
         holder.icon.setImageResource(R.drawable.ic_heart);
+
+        holder.itemView.setOnClickListener(view -> {
+            Intent i = new Intent(context, MessageActivity.class);
+            i.putExtra("userid", user.getUserId());
+            context.startActivity(i);
+        });
     }
 
     @Override

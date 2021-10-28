@@ -10,11 +10,7 @@ import android.view.ViewGroup;
 
 import com.comp90018.lovealarm.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AlarmFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class AlarmFragment extends Fragment {
 
     public AlarmFragment() {
