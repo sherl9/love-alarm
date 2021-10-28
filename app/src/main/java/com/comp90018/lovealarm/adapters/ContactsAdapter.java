@@ -1,5 +1,7 @@
 package com.comp90018.lovealarm.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.lovealarm.R;
+import com.comp90018.lovealarm.activity.MainActivity;
+import com.comp90018.lovealarm.activity.MessageActivity;
 import com.comp90018.lovealarm.model.User;
 
 import java.util.List;
@@ -36,11 +40,18 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     private final List<User> contacts;
     private List<User> list;
+    private Context context;
 
     public ContactsAdapter(List<User> contacts) {
         this.contacts = contacts;
         this.list = contacts;
     }
+
+    public ContactsAdapter(Context context, List<User> contacts) {
+        this.contacts = contacts;
+        this.context = context;
+    }
+
 
     public List<User> getContacts() {
         return contacts;
@@ -57,19 +68,31 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.contacts_list_item, parent, false));
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.contacts_list_item, parent, false);
+        return new ContactsAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.text.setText(list.get(position).getUserName());
+        User users = contacts.get(position);
+        holder.text.setText(users.getUserName());
         // TODO: Change image
         holder.icon.setImageResource(R.drawable.ic_heart);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(context, MessageActivity.class);
+                i.putExtra("userid", users.getUserId());
+                context.startActivity(i);
+
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return contacts.size();
     }
 }

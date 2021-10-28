@@ -11,6 +11,7 @@ import android.view.MenuItem;
 
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.fragment.AlarmFragment;
+import com.comp90018.lovealarm.fragment.ChatFragment;
 import com.comp90018.lovealarm.fragment.ContactsFragment;
 import com.comp90018.lovealarm.fragment.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             case R.id.contacts:
                 menuFragment = new ContactsFragment();
+                break;
+            case R.id.chat:
+                menuFragment = new ChatFragment();
                 break;
         }
         if(menuFragment != null){
