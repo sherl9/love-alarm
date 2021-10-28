@@ -34,7 +34,6 @@ public class ContactsFragment extends Fragment {
     private RecyclerView recyclerView;
 
     private ContactsAdapter contactsAdapter;
-    private List<User> allUsers;    // all the users displayed in the contact fragment
 
     public ContactsFragment() {
         // Required empty public constructor
@@ -46,27 +45,12 @@ public class ContactsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-
-        // TODO get real contacts list
-//        List<User> contactsList = new ArrayList<>();
-//        for (int i = 0; i < 50; i++) {
-//            contactsList.add(new User("000", "user - " + i, "test@test.com"));
-//        }
-
-
-//        contactsAdapter = new ContactsAdapter(contactsList);
-
-
+        contactsAdapter = new ContactsAdapter(getContext(), new ArrayList<>());
+        autoUpdateContactList();
 
         recyclerView = view.findViewById(R.id.recycler_contacts);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        allUsers = new ArrayList<>();
-        ReadUsers();
-//        recyclerView.setAdapter(contactsAdapter);
-
-
 
         searchEdittext = view.findViewById(R.id.search_edit_text);
         searchEdittext.setOnKeyListener((v, i, keyEvent) -> {
@@ -82,26 +66,28 @@ public class ContactsFragment extends Fragment {
         return view;
     }
 
-    private void ReadUsers(){
-        final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    private void autoUpdateContactList() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) return;
+
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                allUsers.clear();
-                for(DataSnapshot snapshotchild : snapshot.getChildren()){
-                        User user = snapshotchild.getValue(User.class);
-                        assert user != null;
-                        if (!user.getUserId().equals(firebaseUser.getUid())){
-                            allUsers.add(user);
-                        }
-//                        break;
+                List<User> contactList = contactsAdapter.getContactList();
 
-//                    }
-
-
+                contactList.clear();
+                for (DataSnapshot snapshotChild : snapshot.getChildren()) {
+                    User user = snapshotChild.getValue(User.class);
+                    if (user != null && !currentUser.getUid().equals(user.getUserId())) {
+                        contactList.add(user);
+                    }
                 }
-                contactsAdapter = new ContactsAdapter(getContext(), allUsers);
+
+                if (contactsAdapter.getContactList() != contactsAdapter.getList()) {
+                    contactsAdapter.getList().clear();
+                    contactsAdapter.setList(contactList);
+                }
                 recyclerView.setAdapter(contactsAdapter);
             }
 
@@ -110,20 +96,18 @@ public class ContactsFragment extends Fragment {
 
             }
         });
-
     }
-
 
     private void doSearch() {
         Editable text = searchEdittext.getText();
         if (text == null || text.length() == 0) {
-            if (contactsAdapter.getContacts() != contactsAdapter.getList()) {
+            if (contactsAdapter.getContactList() != contactsAdapter.getList()) {
                 contactsAdapter.getList().clear();
-                contactsAdapter.setList(contactsAdapter.getContacts());
+                contactsAdapter.setList(contactsAdapter.getContactList());
             }
         } else {
             String keyword = text.toString();
-            List<User> contacts = contactsAdapter.getContacts();
+            List<User> contacts = contactsAdapter.getContactList();
             List<User> result = new ArrayList<>();
             for (User user : contacts) {
                 if (user.getUserName().contains(keyword)) {
