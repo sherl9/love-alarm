@@ -32,7 +32,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
     private final List<User> contactList;
-    private List<User> list;
+    private final List<User> list;
     private final Context context;
 
     public ContactsAdapter(Context context) {
@@ -54,10 +54,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     public List<User> getList() {
         return list;
-    }
-
-    public void setList(List<User> list) {
-        this.list = list;
     }
 
     @NonNull
