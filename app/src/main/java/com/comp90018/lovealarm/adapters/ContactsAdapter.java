@@ -65,6 +65,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
         holder.itemView.setOnClickListener(view -> {
             Intent i = new Intent(context, ContactProfileActivity.class);
+            i.putExtra(ContactProfileActivity.KEY_USERID, user.getUserId());
             i.putExtra(ContactProfileActivity.KEY_USERNAME, user.getUserName());
             context.startActivity(i);
         });
