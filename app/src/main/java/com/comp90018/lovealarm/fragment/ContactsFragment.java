@@ -45,7 +45,7 @@ public class ContactsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        contactsAdapter = new ContactsAdapter(getContext(), new ArrayList<>());
+        contactsAdapter = new ContactsAdapter(getContext());
         autoUpdateContactList();
 
         recyclerView = view.findViewById(R.id.recycler_contacts);
@@ -67,6 +67,7 @@ public class ContactsFragment extends Fragment {
     }
 
     private void autoUpdateContactList() {
+        // FIXME get contacts list
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
 

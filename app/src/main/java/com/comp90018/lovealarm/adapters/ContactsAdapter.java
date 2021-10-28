@@ -15,6 +15,7 @@ import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.activity.MessageActivity;
 import com.comp90018.lovealarm.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
@@ -32,8 +33,15 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     private final List<User> contactList;
     private List<User> list;
-    private Context context;
+    private final Context context;
 
+    public ContactsAdapter(Context context) {
+        this.contactList = new ArrayList<>();
+        this.list = new ArrayList<>();
+        this.context = context;
+    }
+
+    // TODO remove this constructor
     public ContactsAdapter(Context context, List<User> contactList) {
         this.contactList = contactList;
         this.list = contactList;
