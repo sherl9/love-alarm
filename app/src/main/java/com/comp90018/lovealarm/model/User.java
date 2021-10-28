@@ -7,7 +7,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class User {
@@ -17,6 +19,8 @@ public class User {
     private String avatarName = "";
     private String bio = "";
     private String dob = "";
+    private String alertUserId = "";
+    private List<String> admirerIdList = new ArrayList<>();
 
     public User(String userId, String userName, String email, String avatarName, String bio, String dob) {
         this.userId = userId;
@@ -86,6 +90,22 @@ public class User {
 
     public void setAvatarURL(String avatarURL) {
         this.avatarName = avatarURL;
+    }
+
+    public String getAlertUserId() {
+        return alertUserId;
+    }
+
+    public void setAlertUserId(String alertUserId) {
+        this.alertUserId = alertUserId;
+    }
+
+    public List<String> getAdmirerIdList() {
+        return admirerIdList;
+    }
+
+    public void setAdmirerIdList(List<String> admirerIdList) {
+        this.admirerIdList = admirerIdList;
     }
 
     @Exclude
