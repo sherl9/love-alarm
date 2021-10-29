@@ -25,9 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ContactsFragment extends Fragment {
     private TextInputEditText searchEdittext;
     private View searchLocal;
@@ -45,7 +42,7 @@ public class ContactsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        contactsAdapter = new ContactsAdapter(getContext(), new ArrayList<>());
+        contactsAdapter = new ContactsAdapter(getContext());
         autoUpdateContactList();
 
         recyclerView = view.findViewById(R.id.recycler_contacts);
@@ -67,6 +64,7 @@ public class ContactsFragment extends Fragment {
     }
 
     private void autoUpdateContactList() {
+        // FIXME get contacts list
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) return;
 
@@ -74,20 +72,16 @@ public class ContactsFragment extends Fragment {
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<User> contactList = contactsAdapter.getContactList();
-
-                contactList.clear();
+                contactsAdapter.getContactList().clear();
                 for (DataSnapshot snapshotChild : snapshot.getChildren()) {
                     User user = snapshotChild.getValue(User.class);
                     if (user != null && !currentUser.getUid().equals(user.getUserId())) {
-                        contactList.add(user);
+                        contactsAdapter.getContactList().add(user);
                     }
                 }
 
-                if (contactsAdapter.getContactList() != contactsAdapter.getList()) {
-                    contactsAdapter.getList().clear();
-                    contactsAdapter.setList(contactList);
-                }
+                contactsAdapter.getList().clear();
+                contactsAdapter.getList().addAll(contactsAdapter.getContactList());
                 recyclerView.setAdapter(contactsAdapter);
             }
 
@@ -99,23 +93,19 @@ public class ContactsFragment extends Fragment {
     }
 
     private void doSearch() {
+        contactsAdapter.getList().clear();
         Editable text = searchEdittext.getText();
+
         if (text == null || text.length() == 0) {
-            if (contactsAdapter.getContactList() != contactsAdapter.getList()) {
-                contactsAdapter.getList().clear();
-                contactsAdapter.setList(contactsAdapter.getContactList());
-            }
+            contactsAdapter.getList().addAll(contactsAdapter.getContactList());
         } else {
-            String keyword = text.toString();
-            List<User> contacts = contactsAdapter.getContactList();
-            List<User> result = new ArrayList<>();
-            for (User user : contacts) {
-                if (user.getUserName().contains(keyword)) {
-                    result.add(user);
+            for (User user : contactsAdapter.getContactList()) {
+                if (user.getUserName().toLowerCase().contains(text.toString().toLowerCase())) {
+                    contactsAdapter.getList().add(user);
                 }
             }
-            contactsAdapter.setList(result);
         }
+
         recyclerView.setAdapter(contactsAdapter);
     }
 }
