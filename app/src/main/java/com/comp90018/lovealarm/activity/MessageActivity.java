@@ -3,6 +3,8 @@ package com.comp90018.lovealarm.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,6 +12,12 @@ import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.adapters.MessageAdapter;
 import com.comp90018.lovealarm.model.Chat;
 import com.comp90018.lovealarm.model.User;
+import com.devlomi.record_view.OnBasketAnimationEnd;
+import com.devlomi.record_view.OnRecordClickListener;
+import com.devlomi.record_view.OnRecordListener;
+import com.devlomi.record_view.RecordButton;
+import com.devlomi.record_view.RecordView;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -17,9 +25,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import android.Manifest;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Menu;
@@ -32,11 +49,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -55,6 +75,14 @@ public class MessageActivity extends AppCompatActivity {
     List<Chat> allChat;
     String userid;
 
+    MediaRecorder audioRecorder;
+    String audioPath;
+    String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
+    List<String> mPermissionList = new ArrayList<>();
+
+    private final int mRequestCode = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +94,101 @@ public class MessageActivity extends AppCompatActivity {
         sendBtn = findViewById(R.id.btn_send);
         msgEditText = findViewById(R.id.text_send);
 
-        // go back
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // voice recorder
+        audioRecorder = new MediaRecorder();
+        RecordView recordView = (RecordView) findViewById(R.id.record_view);
+        final RecordButton recordButton = (RecordButton) findViewById(R.id.record_button);
 
+        recordButton.setRecordView(recordView);
+        initPermission();
+        recordButton.setListenForRecord(true);
+
+
+        recordButton.setOnRecordClickListener(new OnRecordClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MessageActivity.this, "RECORD BUTTON CLICKED", Toast.LENGTH_SHORT).show();
+                Log.d("RecordButton", "RECORD BUTTON CLICKED");
+
+            }
+        });
+
+        //Cancel Bounds is when the Slide To Cancel text gets before the timer . default is 8
+        recordView.setCancelBounds(8);
+        recordView.setSmallMicColor(Color.parseColor("#c2185b"));
+
+        //prevent recording under one Second
+        recordView.setLessThanSecondAllowed(false);
+        recordView.setSlideToCancelText("Slide To Cancel");
+        recordView.setCustomSounds(R.raw.record_start, R.raw.record_finished, 0);
+        recordView.setOnRecordListener(new OnRecordListener() {
+            @Override
+            public void onStart() {
+                //Start Recording..
+                Log.d("RecordView", "onStart");
+
+                setUpRecording();
+
+                try {
+                    audioRecorder.prepare();
+                    audioRecorder.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                //On Swipe To Cancel
+                Log.d("RecordView", "onCancel");
+
+                audioRecorder.reset();
+                audioRecorder.release();
+                File file = new File(audioPath);
+                if (file.exists())
+                    file.delete();
+
+            }
+
+            @Override
+            public void onFinish(long recordTime) {
+                //Stop Recording..
+                //limitReached to determine if the Record was finished when time limit reached.
+                String time = getHumanTimeText(recordTime);
+                Log.d("RecordView", "onFinish");
+
+                Log.d("RecordTime", time);
+
+                try {
+                    audioRecorder.stop();
+                    audioRecorder.release();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                sendRecodingMessage(audioPath);
+            }
+
+            @Override
+            public void onLessThanSecond() {
+                //When the record time is less than One Second
+                Log.d("RecordView", "onLessThanSecond");
+
+                audioRecorder.reset();
+                audioRecorder.release();
+
+                File file = new File(audioPath);
+                if (file.exists())
+                    file.delete();
+            }
+        });
+
+        recordView.setOnBasketAnimationEndListener(new OnBasketAnimationEnd() {
+            @Override
+            public void onAnimationEnd() {
+                Log.d("RecordView", "Basket Animation Finished");
+            }
+        });
 
         // RecyclerView
         recyclerView = findViewById(R.id.recycler_view);
@@ -201,6 +321,64 @@ public class MessageActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
+        });
+
+    }
+
+    private String getHumanTimeText(long milliseconds) {
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(milliseconds),
+                TimeUnit.MILLISECONDS.toSeconds(milliseconds) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
+    }
+
+    private void initPermission(){
+        mPermissionList.clear();
+        for (int i = 0; i < permissions.length; i++){
+            if (ContextCompat.checkSelfPermission(MessageActivity.this, permissions[i]) !=
+                    PackageManager.PERMISSION_GRANTED){
+                mPermissionList.add(permissions[i]);
+            }
+        }
+        if (mPermissionList.size()>0){
+            // ask for permission
+            ActivityCompat.requestPermissions(MessageActivity.this, permissions, mRequestCode);
+        }
+    }
+
+    private void setUpRecording() {
+
+        audioRecorder = new MediaRecorder();
+        audioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        audioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        audioRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File dir = cw.getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+        File file = new File(dir, File.separator + System.currentTimeMillis() + ".3gp");
+
+        audioPath = file.getAbsolutePath();
+
+        audioRecorder.setOutputFile(audioPath);
+    }
+
+    private void sendRecodingMessage(String audioPath) {
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference("/Media/Recording/" + fuser.getUid() + "/" + System.currentTimeMillis());
+        Uri audioFile = Uri.fromFile(new File(audioPath));
+        storageReference.putFile(audioFile).addOnSuccessListener(success -> {
+            Task<Uri> audioUrl = success.getStorage().getDownloadUrl();
+            audioUrl.addOnCompleteListener(path -> {
+                if (path.isSuccessful()) {
+                    String url = path.getResult().toString();
+                    Date now = new Date();
+                    String strDateFormat = "MM-dd HH:mm:ss";
+                    SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+                    String date = sdf.format(now);
+                    sendMessage(fuser.getUid(), userid, url, date);
+
+                }
+            });
         });
 
     }
