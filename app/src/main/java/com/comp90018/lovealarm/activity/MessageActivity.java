@@ -230,7 +230,7 @@ public class MessageActivity extends AppCompatActivity {
                     String strDateFormat = "MM-dd HH:mm:ss";
                     SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
                     String date = sdf.format(now);
-                    sendMessage(fuser.getUid(), userid, msg, date);
+                    sendMessage(fuser.getUid(), userid, msg, date, "text");
                 }
                 else{
                     Toast.makeText(MessageActivity.this, "You cannot send an empty message!", Toast.LENGTH_LONG);
@@ -243,7 +243,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    private void sendMessage(String sender, String receiver, String message, String date){
+    private void sendMessage(String sender, String receiver, String message, String date,String type){
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -251,6 +251,7 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
         hashMap.put("date", date);
+        hashMap.put("type", type);
 
         reference.child("Chats").push().setValue(hashMap);
 
@@ -264,7 +265,12 @@ public class MessageActivity extends AppCompatActivity {
                 if (!snapshot.exists()){
                     chatRef.child("id").setValue(userid);
                 }
-                chatRef.child("lastMessage").setValue(message);
+                if (type.equals("audio")){
+                    chatRef.child("lastMessage").setValue("[audio message]");
+                }
+                else{
+                    chatRef.child("lastMessage").setValue(message);
+                }
                 chatRef.child("date").setValue(date);
             }
 
@@ -283,7 +289,12 @@ public class MessageActivity extends AppCompatActivity {
                 if (!snapshot.exists()){
                     chatRef2.child("id").setValue(fuser.getUid());
                 }
-                chatRef2.child("lastMessage").setValue(message);
+                if (type.equals("audio")){
+                    chatRef2.child("lastMessage").setValue("[audio message]");
+                }
+                else{
+                    chatRef2.child("lastMessage").setValue(message);
+                }
                 chatRef2.child("date").setValue(date);
             }
 
@@ -375,7 +386,7 @@ public class MessageActivity extends AppCompatActivity {
                     String strDateFormat = "MM-dd HH:mm:ss";
                     SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
                     String date = sdf.format(now);
-                    sendMessage(fuser.getUid(), userid, url, date);
+                    sendMessage(fuser.getUid(), userid, url, date, "audio");
 
                 }
             });
