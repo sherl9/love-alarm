@@ -18,16 +18,16 @@ public class ChatList {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getLastMessage() {
         return lastMessage;
     }
 
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getDate() {
