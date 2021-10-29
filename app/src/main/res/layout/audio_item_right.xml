@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="8dp">
+
+    <RelativeLayout
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true">
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <me.jagar.chatvoiceplayerlibrary.VoicePlayerView
+            android:id="@+id/voicePlayerView"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:padding="2dp"
+            app:enableVisualizer="false"
+            app:visualizationPlayedColor="#000"
+            app:visualizationNotPlayedColor="#F7CAC9"
+            app:playPauseBackgroundColor="#F7CAC9"
+            app:timingBackgroundColor="#F7CAC9"
+            app:seekBarProgressColor="#615F5F"
+            app:showShareButton="false"
+            app:shareCornerRadius="60"
+            app:playPauseCornerRadius="60"
+            app:showTiming="true"
+            app:viewCornerRadius="30"
+            app:viewBackground="#E6E5EA"
+            app:progressTimeColor="#000"
+            app:seekBarThumbColor="#F7CAC9"
+            app:shareBackgroundColor="#ff7700"
+            app:playProgressbarColor="#7C7B7B"
+            />
+
+
+        <TextView
+            android:id="@+id/sent_time"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/voicePlayerView"
+            android:paddingRight="8dp"
+            android:text="10-20 20:20:20"
+            android:textAlignment="center"/>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
