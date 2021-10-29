@@ -21,18 +21,23 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
 
+import me.jagar.chatvoiceplayerlibrary.VoicePlayerView;
+
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final ImageView profileImage;
         public final TextView showMessage;
         public final TextView sentTime;
+        public final VoicePlayerView voicePlayerView;
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImage = itemView.findViewById(R.id.profile_image);
             showMessage = itemView.findViewById(R.id.show_message);
             sentTime = itemView.findViewById(R.id.sent_time);
+            voicePlayerView = itemView.findViewById(R.id.voicePlayerView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -50,8 +55,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     // firebase
     FirebaseUser fuser;
 
-    private static final int MSG_TYPE_LEFT = 0;
-    private static final int MSG_TYPE_RIGHT = 1;
+    private static final int MSG_TYPE_LEFT_TEXT = 0;
+    private static final int MSG_TYPE_RIGHT_TEXT = 1;
+    private static final int MSG_TYPE_LEFT_AUDIO = 2;
+    private static final int MSG_TYPE_RIGHT_AUDIO = 3;
 
 
     public MessageAdapter(Context context, List<Chat> allChat, String imgURL) {
@@ -66,14 +73,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        if (viewType == MSG_TYPE_RIGHT){
+        if (viewType == MSG_TYPE_RIGHT_TEXT){
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.chat_item_right, null, false);
             return new MessageAdapter.ViewHolder(view);
         }
-        else{
+        else if (viewType == MSG_TYPE_RIGHT_AUDIO){
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.audio_item_right, null, false);
+            return new MessageAdapter.ViewHolder(view);
+        }
+        else if (viewType == MSG_TYPE_LEFT_TEXT){
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.chat_item_left, null, false);
+            return new MessageAdapter.ViewHolder(view);
+        }
+        else{
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.audio_item_left, null, false);
             return new MessageAdapter.ViewHolder(view);
         }
     }
@@ -82,10 +99,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
 
         Chat chat = allChat.get(position);
-
-        holder.showMessage.setText(chat.getMessage());
+        if (chat.getType().equals("text")){
+            holder.showMessage.setText(chat.getMessage());
+        }
+        else if (chat.getType().equals("audio")){
+            holder.voicePlayerView.setAudio(chat.getMessage());
+        }
         holder.sentTime.setText(chat.getDate());
-
         holder.profileImage.setImageResource(R.mipmap.ic_launcher);
 
 
@@ -99,11 +119,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public int getItemViewType(int position) {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
-        if (allChat.get(position).getSender().equals(fuser.getUid())){
-            return MSG_TYPE_RIGHT;
+        if (allChat.get(position).getSender().equals(fuser.getUid()) && allChat.get(position)
+                .getType().equals("text")){
+            return MSG_TYPE_RIGHT_TEXT;
+        }
+        else if (allChat.get(position).getSender().equals(fuser.getUid()) && allChat.get(position)
+                .getType().equals("audio")){
+            return MSG_TYPE_RIGHT_AUDIO;
+        }
+        else if (allChat.get(position).getReceiver().equals(fuser.getUid()) && allChat.get(position)
+                .getType().equals("text")){
+            return MSG_TYPE_LEFT_TEXT;
         }
         else{
-            return MSG_TYPE_LEFT;
+            return MSG_TYPE_LEFT_AUDIO;
         }
     }
 }
