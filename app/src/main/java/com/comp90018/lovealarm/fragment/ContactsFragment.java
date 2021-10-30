@@ -46,7 +46,6 @@ public class ContactsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
         contactsAdapter = new ContactsAdapter();
-        autoUpdateContactList();
 
         recyclerView = view.findViewById(R.id.recycler_contacts);
         recyclerView.setHasFixedSize(true);
@@ -69,6 +68,8 @@ public class ContactsFragment extends Fragment {
             Intent i = new Intent(v.getContext(), AddContactActivity.class);
             v.getContext().startActivity(i);
         });
+
+        autoUpdateContactList();
 
         return view;
     }
