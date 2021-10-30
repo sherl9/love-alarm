@@ -1,10 +1,5 @@
 package com.comp90018.lovealarm.model;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
@@ -21,6 +16,8 @@ public class User {
     private String dob = "";
     private String alertUserId = "";
     private List<String> admirerIdList = new ArrayList<>();
+    private List<String> contactIdList = new ArrayList<>();
+    private List<String> contactRequestIdList = new ArrayList<>();
 
     public User(String userId, String userName, String email, String avatarName, String bio, String dob) {
         this.userId = userId;
@@ -106,6 +103,22 @@ public class User {
 
     public void setAdmirerIdList(List<String> admirerIdList) {
         this.admirerIdList = admirerIdList;
+    }
+
+    public List<String> getContactIdList() {
+        return contactIdList;
+    }
+
+    public void setContactIdList(List<String> contactIdList) {
+        this.contactIdList = contactIdList;
+    }
+
+    public List<String> getContactRequestIdList() {
+        return contactRequestIdList;
+    }
+
+    public void setContactRequestIdList(List<String> contactRequestIdList) {
+        this.contactRequestIdList = contactRequestIdList;
     }
 
     @Exclude
