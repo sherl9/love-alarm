@@ -35,6 +35,9 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".activity.AddContactActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ContactProfileActivity"
             android:exported="false" />
         <activity

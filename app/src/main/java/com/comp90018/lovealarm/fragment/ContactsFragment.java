@@ -1,5 +1,6 @@
 package com.comp90018.lovealarm.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.KeyEvent;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.lovealarm.R;
+import com.comp90018.lovealarm.activity.AddContactActivity;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
 import com.comp90018.lovealarm.model.User;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -63,6 +65,10 @@ public class ContactsFragment extends Fragment {
 
         addButton = view.findViewById(R.id.contacts_add_button);
 //        addButton.shrink();
+        addButton.setOnClickListener(v -> {
+            Intent i = new Intent(v.getContext(), AddContactActivity.class);
+            v.getContext().startActivity(i);
+        });
 
         return view;
     }
