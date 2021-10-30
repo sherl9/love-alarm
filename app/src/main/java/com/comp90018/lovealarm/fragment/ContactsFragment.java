@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.lovealarm.R;
-import com.comp90018.lovealarm.activity.AddContactActivity;
+import com.comp90018.lovealarm.activity.ContactRequestActivity;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
 import com.comp90018.lovealarm.model.User;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -31,7 +31,7 @@ public class ContactsFragment extends Fragment {
     private TextInputEditText searchEdittext;
     private View searchLocal;
     private RecyclerView recyclerView;
-    private ExtendedFloatingActionButton addButton;
+    private ExtendedFloatingActionButton requestButton;
 
     private ContactsAdapter contactsAdapter;
 
@@ -62,10 +62,10 @@ public class ContactsFragment extends Fragment {
         searchLocal = view.findViewById(R.id.contacts_search_button);
         searchLocal.setOnClickListener(v -> doSearch());
 
-        addButton = view.findViewById(R.id.contacts_add_button);
+        requestButton = view.findViewById(R.id.contacts_request_button);
 //        addButton.shrink();
-        addButton.setOnClickListener(v -> {
-            Intent i = new Intent(v.getContext(), AddContactActivity.class);
+        requestButton.setOnClickListener(v -> {
+            Intent i = new Intent(v.getContext(), ContactRequestActivity.class);
             v.getContext().startActivity(i);
         });
 

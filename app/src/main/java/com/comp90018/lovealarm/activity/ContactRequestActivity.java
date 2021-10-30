@@ -16,7 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
-public class AddContactActivity extends AppCompatActivity {
+public class ContactRequestActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
 
     private ContactsAdapter contactsAdapter;
@@ -24,7 +24,7 @@ public class AddContactActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact);
+        setContentView(R.layout.activity_contact_request);
 
         contactsAdapter = new ContactsAdapter();
 
