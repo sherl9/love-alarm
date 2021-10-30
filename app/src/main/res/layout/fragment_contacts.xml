@@ -50,6 +50,16 @@
 
         </androidx.core.widget.NestedScrollView>
 
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/contacts_add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:contentDescription=""
+            android:text="new request"
+            app:icon="@drawable/ic_heart" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 </FrameLayout>

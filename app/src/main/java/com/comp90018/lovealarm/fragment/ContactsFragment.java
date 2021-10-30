@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
 import com.comp90018.lovealarm.model.User;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,6 +29,7 @@ public class ContactsFragment extends Fragment {
     private TextInputEditText searchEdittext;
     private View searchLocal;
     private RecyclerView recyclerView;
+    private ExtendedFloatingActionButton addButton;
 
     private ContactsAdapter contactsAdapter;
 
@@ -58,6 +60,9 @@ public class ContactsFragment extends Fragment {
 
         searchLocal = view.findViewById(R.id.contacts_search_button);
         searchLocal.setOnClickListener(v -> doSearch());
+
+        addButton = view.findViewById(R.id.contacts_add_button);
+//        addButton.shrink();
 
         return view;
     }
