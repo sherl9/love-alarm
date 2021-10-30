@@ -1,17 +1,16 @@
 package com.comp90018.lovealarm.fragment;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
@@ -42,7 +41,7 @@ public class ContactsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        contactsAdapter = new ContactsAdapter(getContext());
+        contactsAdapter = new ContactsAdapter();
         autoUpdateContactList();
 
         recyclerView = view.findViewById(R.id.recycler_contacts);
