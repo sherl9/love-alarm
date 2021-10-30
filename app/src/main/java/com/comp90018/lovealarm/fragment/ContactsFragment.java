@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,12 +19,13 @@ import com.comp90018.lovealarm.model.User;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class ContactsFragment extends Fragment {
     private TextInputEditText searchEdittext;
@@ -69,36 +69,32 @@ public class ContactsFragment extends Fragment {
             v.getContext().startActivity(i);
         });
 
-        autoUpdateContactList();
+        getContactList();
 
         return view;
     }
 
-    private void autoUpdateContactList() {
-        // FIXME get contacts list
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) return;
+    private void getContactList() {
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                contactsAdapter.getContactList().clear();
-                for (DataSnapshot snapshotChild : snapshot.getChildren()) {
-                    User user = snapshotChild.getValue(User.class);
-                    if (user != null && !currentUser.getUid().equals(user.getUserId())) {
-                        contactsAdapter.getContactList().add(user);
-                    }
+        String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        users.child(currentUserId).child("contactIdList").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<String> contactIdList = new ArrayList<>();
+                for (DataSnapshot child : Objects.requireNonNull(task.getResult()).getChildren()) {
+                    contactIdList.add(child.getValue(String.class));
                 }
 
-                contactsAdapter.getList().clear();
-                contactsAdapter.getList().addAll(contactsAdapter.getContactList());
-                recyclerView.setAdapter(contactsAdapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+                for (String userId : contactIdList) {
+                    users.child(userId).get().addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            User user = Objects.requireNonNull(task1.getResult()).getValue(User.class);
+                            contactsAdapter.getContactList().add(user);
+                            contactsAdapter.getList().add(user);
+                            recyclerView.setAdapter(contactsAdapter);
+                        }
+                    });
+                }
             }
         });
     }
