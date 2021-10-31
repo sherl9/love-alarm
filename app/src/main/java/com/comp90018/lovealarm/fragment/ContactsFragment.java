@@ -63,21 +63,21 @@ public class ContactsFragment extends Fragment {
         searchLocal.setOnClickListener(v -> doSearch());
 
         requestButton = view.findViewById(R.id.contacts_request_button);
-//        addButton.shrink();
+        requestButton.hide();
         requestButton.setOnClickListener(v -> {
             Intent i = new Intent(v.getContext(), ContactRequestActivity.class);
             v.getContext().startActivity(i);
         });
 
-        getContactList();
+        doInitialize();
 
         return view;
     }
 
-    private void getContactList() {
+    private void doInitialize() {
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
-
         String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
         users.child(currentUserId).child("contactIdList").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 List<String> contactIdList = new ArrayList<>();
@@ -94,6 +94,15 @@ public class ContactsFragment extends Fragment {
                             recyclerView.setAdapter(contactsAdapter);
                         }
                     });
+                }
+            }
+        });
+
+        users.child(currentUserId).child("contactRequestIdList").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DataSnapshot ignored : Objects.requireNonNull(task.getResult()).getChildren()) {
+                    requestButton.show();
+                    break;
                 }
             }
         });
