@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -81,7 +82,7 @@ public class ProfileFragment extends Fragment {
     DatabaseReference dbReference;
     String userId;
     FirebaseUser user;
-    ImageView logoutButton;
+    Button logoutButton;
     private User currentUser;
 
     public ProfileFragment() {
@@ -193,7 +194,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateUI() {
-        if (currentUser.getAvatarName() != null) {
+        if (!currentUser.getAvatarName().trim().equals("")) {
             StorageReference image = storageReference.child("avatars/" + currentUser.getAvatarName());
             image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
