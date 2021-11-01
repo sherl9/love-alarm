@@ -9,7 +9,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,10 +45,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -60,8 +57,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ProfileFragment extends Fragment {
     public static final int CAMERA_PERM_CODE = 101;
@@ -225,21 +220,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateUserData() {
-        Map<String, Object> userValues = currentUser.toMap();
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/Users/" + userId, userValues);
-        dbReference.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                if(error == null){
-                    updateUI();
-                } else {
-                    Log.e("firebase", "db update failed");
-                }
-            }
-        });
+        dbReference.child("Users").child(userId).setValue(currentUser);
     }
-
 
     private void showAuthDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
