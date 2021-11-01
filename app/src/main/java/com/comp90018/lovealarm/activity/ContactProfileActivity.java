@@ -1,20 +1,26 @@
 package com.comp90018.lovealarm.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.comp90018.lovealarm.R;
+import com.comp90018.lovealarm.model.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 public class ContactProfileActivity extends AppCompatActivity {
     public static final String KEY_USERNAME = "key_contact_profile_username";
     public static final String KEY_USERID = "key_contact_profile_userid";
 
     private TextView usernameTextView;
-    private Button chatButton;
+    private Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,15 +28,72 @@ public class ContactProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contact_profile);
 
         Intent intent = getIntent();
+        String username = intent.getStringExtra(KEY_USERNAME);
+        String userId = intent.getStringExtra(KEY_USERID);
 
         usernameTextView = findViewById(R.id.contact_profile_username);
-        usernameTextView.setText(intent.getStringExtra(KEY_USERNAME));
+        usernameTextView.setText(username);
 
-        chatButton = findViewById(R.id.contact_profile_chat);
-        chatButton.setOnClickListener(view -> {
-            Intent i = new Intent(ContactProfileActivity.this, MessageActivity.class);
-            i.putExtra("userid", intent.getStringExtra(KEY_USERID));
-            startActivity(i);
+        button = findViewById(R.id.contact_profile_button);
+
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
+        String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+        users.child(currentUserId).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                User currentUser = Objects.requireNonNull(task.getResult()).getValue(User.class);
+                assert currentUser != null;
+
+                if (currentUser.getContactIdList().contains(userId)) {
+                    button.setText("Chat");
+                    button.setOnClickListener(view -> {
+                        Intent i = new Intent(ContactProfileActivity.this, MessageActivity.class);
+                        i.putExtra("userid", userId);
+                        startActivity(i);
+                    });
+                } else if (currentUser.getContactRequestIdList().contains(userId)) {
+                    button.setText("Accept");
+                    button.setOnClickListener(view -> {
+                        // TODO: add friend
+                        currentUser.getContactRequestIdList().remove(userId);
+                        if (!currentUser.getContactIdList().contains(userId)) {
+                            currentUser.getContactIdList().add(userId);
+                        }
+                        users.child(currentUserId).setValue(currentUser);
+
+                        users.child(userId).get().addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                User user = Objects.requireNonNull(task1.getResult()).getValue(User.class);
+                                assert user != null;
+                                user.getContactRequestIdList().remove(currentUserId);
+                                if (!user.getContactIdList().contains(currentUserId)) {
+                                    user.getContactIdList().add(currentUserId);
+                                }
+                                users.child(userId).setValue(user);
+                            }
+                        });
+
+                        button.setText("Chat");
+                        button.setOnClickListener(v -> {
+                            Intent i = new Intent(ContactProfileActivity.this, MessageActivity.class);
+                            i.putExtra("userid", userId);
+                            startActivity(i);
+                        });
+                    });
+                } else {
+                    button.setText("Add");
+                    users.child(userId).get().addOnCompleteListener(task2 -> {
+                        if (task2.isSuccessful()) {
+                            User user = Objects.requireNonNull(task2.getResult()).getValue(User.class);
+                            assert user != null;
+                            if (!user.getContactRequestIdList().contains(currentUserId)) {
+                                user.getContactRequestIdList().add(currentUserId);
+                                users.child(userId).setValue(user);
+                            }
+                        }
+                    });
+                }
+            }
         });
     }
 }
