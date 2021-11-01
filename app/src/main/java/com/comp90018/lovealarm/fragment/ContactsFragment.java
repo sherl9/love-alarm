@@ -73,10 +73,6 @@ public class ContactsFragment extends Fragment {
 
         requestButton = view.findViewById(R.id.contacts_request_button);
         requestButton.hide();
-        requestButton.setOnClickListener(v -> {
-            Intent i = new Intent(v.getContext(), ContactRequestActivity.class);
-            v.getContext().startActivity(i);
-        });
 
         doInitialize();
 
@@ -111,6 +107,10 @@ public class ContactsFragment extends Fragment {
             if (task.isSuccessful()) {
                 for (DataSnapshot ignored : Objects.requireNonNull(task.getResult()).getChildren()) {
                     requestButton.show();
+                    requestButton.setOnClickListener(v -> {
+                        Intent i = new Intent(v.getContext(), ContactRequestActivity.class);
+                        v.getContext().startActivity(i);
+                    });
                     break;
                 }
             }

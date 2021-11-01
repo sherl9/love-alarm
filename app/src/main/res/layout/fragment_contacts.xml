@@ -58,7 +58,7 @@
             android:layout_margin="16dp"
             android:contentDescription=""
             android:text="new request"
-            app:icon="@drawable/ic_heart" />
+            app:icon="@drawable/ic_new_request" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
