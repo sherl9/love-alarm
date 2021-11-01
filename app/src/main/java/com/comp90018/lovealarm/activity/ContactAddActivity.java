@@ -13,10 +13,12 @@ import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
 import com.comp90018.lovealarm.model.User;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ContactAddActivity extends AppCompatActivity {
@@ -60,16 +62,29 @@ public class ContactAddActivity extends AppCompatActivity {
             String keyword = text.toString().toLowerCase();
 
             DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
-            users.get().addOnCompleteListener(task -> {
+            String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+            users.child(currentUserId).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    for (DataSnapshot child : Objects.requireNonNull(task.getResult()).getChildren()) {
-                        User user = child.getValue(User.class);
-                        assert user != null;
-                        if (user.getUserName().toLowerCase().contains(keyword)) {
-                            contactsAdapter.getList().add(user);
-                            recyclerView.setAdapter(contactsAdapter);
+                    User currentUser = Objects.requireNonNull(task.getResult()).getValue(User.class);
+                    assert currentUser != null;
+                    List<String> contactIdList = currentUser.getContactIdList();
+
+                    users.get().addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            for (DataSnapshot child : Objects.requireNonNull(task1.getResult()).getChildren()) {
+                                User user = child.getValue(User.class);
+                                assert user != null;
+
+                                if (!user.getUserId().equals(currentUserId)
+                                        && !contactIdList.contains(user.getUserId())
+                                        && user.getUserName().toLowerCase().contains(keyword)) {
+                                    contactsAdapter.getList().add(user);
+                                    recyclerView.setAdapter(contactsAdapter);
+                                }
+                            }
                         }
-                    }
+                    });
                 }
             });
         }
