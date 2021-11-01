@@ -82,7 +82,7 @@ public class ContactProfileActivity extends AppCompatActivity {
                     });
                 } else {
                     button.setText("Add");
-                    users.child(userId).get().addOnCompleteListener(task2 -> {
+                    button.setOnClickListener(view -> users.child(userId).get().addOnCompleteListener(task2 -> {
                         if (task2.isSuccessful()) {
                             User user = Objects.requireNonNull(task2.getResult()).getValue(User.class);
                             assert user != null;
@@ -91,7 +91,7 @@ public class ContactProfileActivity extends AppCompatActivity {
                                 users.child(userId).setValue(user);
                             }
                         }
-                    });
+                    }));
                 }
             }
         });
