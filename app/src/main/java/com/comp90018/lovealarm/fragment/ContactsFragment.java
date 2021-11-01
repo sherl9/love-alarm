@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.lovealarm.R;
+import com.comp90018.lovealarm.activity.ContactAddActivity;
 import com.comp90018.lovealarm.activity.ContactRequestActivity;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
 import com.comp90018.lovealarm.model.User;
@@ -66,7 +67,8 @@ public class ContactsFragment extends Fragment {
 
         addContactButton = view.findViewById(R.id.contacts_add_button);
         addContactButton.setOnClickListener(v -> {
-            // TODO
+            Intent i = new Intent(v.getContext(), ContactAddActivity.class);
+            v.getContext().startActivity(i);
         });
 
         requestButton = view.findViewById(R.id.contacts_request_button);
