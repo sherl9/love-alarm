@@ -1,34 +1,40 @@
 package com.comp90018.lovealarm.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.Editable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.view.menu.ActionMenuItemView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.comp90018.lovealarm.R;
+import com.comp90018.lovealarm.activity.ContactAddActivity;
+import com.comp90018.lovealarm.activity.ContactRequestActivity;
 import com.comp90018.lovealarm.adapters.ContactsAdapter;
 import com.comp90018.lovealarm.model.User;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class ContactsFragment extends Fragment {
     private TextInputEditText searchEdittext;
-    private View searchLocal;
+    private ActionMenuItemView searchLocalButton;
+    private ActionMenuItemView addContactButton;
     private RecyclerView recyclerView;
+    private ExtendedFloatingActionButton requestButton;
 
     private ContactsAdapter contactsAdapter;
 
@@ -42,8 +48,7 @@ public class ContactsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
 
-        contactsAdapter = new ContactsAdapter(getContext());
-        autoUpdateContactList();
+        contactsAdapter = new ContactsAdapter();
 
         recyclerView = view.findViewById(R.id.recycler_contacts);
         recyclerView.setHasFixedSize(true);
@@ -57,37 +62,57 @@ public class ContactsFragment extends Fragment {
             return false;
         });
 
-        searchLocal = view.findViewById(R.id.contacts_search_button);
-        searchLocal.setOnClickListener(v -> doSearch());
+        searchLocalButton = view.findViewById(R.id.contacts_search_button);
+        searchLocalButton.setOnClickListener(v -> doSearch());
+
+        addContactButton = view.findViewById(R.id.contacts_add_button);
+        addContactButton.setOnClickListener(v -> {
+            Intent i = new Intent(v.getContext(), ContactAddActivity.class);
+            v.getContext().startActivity(i);
+        });
+
+        requestButton = view.findViewById(R.id.contacts_request_button);
+        requestButton.hide();
+
+        doInitialize();
 
         return view;
     }
 
-    private void autoUpdateContactList() {
-        // FIXME get contacts list
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser == null) return;
+    private void doInitialize() {
+        DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
+        String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                contactsAdapter.getContactList().clear();
-                for (DataSnapshot snapshotChild : snapshot.getChildren()) {
-                    User user = snapshotChild.getValue(User.class);
-                    if (user != null && !currentUser.getUid().equals(user.getUserId())) {
-                        contactsAdapter.getContactList().add(user);
-                    }
+        users.child(currentUserId).child("contactIdList").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<String> contactIdList = new ArrayList<>();
+                for (DataSnapshot child : Objects.requireNonNull(task.getResult()).getChildren()) {
+                    contactIdList.add(child.getValue(String.class));
                 }
 
-                contactsAdapter.getList().clear();
-                contactsAdapter.getList().addAll(contactsAdapter.getContactList());
-                recyclerView.setAdapter(contactsAdapter);
+                for (String userId : contactIdList) {
+                    users.child(userId).get().addOnCompleteListener(task1 -> {
+                        if (task1.isSuccessful()) {
+                            User user = Objects.requireNonNull(task1.getResult()).getValue(User.class);
+                            contactsAdapter.getContactList().add(user);
+                            contactsAdapter.getList().add(user);
+                            recyclerView.setAdapter(contactsAdapter);
+                        }
+                    });
+                }
             }
+        });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+        users.child(currentUserId).child("contactRequestIdList").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DataSnapshot ignored : Objects.requireNonNull(task.getResult()).getChildren()) {
+                    requestButton.show();
+                    requestButton.setOnClickListener(v -> {
+                        Intent i = new Intent(v.getContext(), ContactRequestActivity.class);
+                        v.getContext().startActivity(i);
+                    });
+                    break;
+                }
             }
         });
     }

@@ -1,6 +1,5 @@
 package com.comp90018.lovealarm.adapters;
 
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,12 +32,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     private final List<User> contactList;
     private final List<User> list;
-    private final Context context;
 
-    public ContactsAdapter(Context context) {
+    public ContactsAdapter() {
         this.contactList = new ArrayList<>();
         this.list = new ArrayList<>();
-        this.context = context;
     }
 
     public List<User> getContactList() {
@@ -64,10 +61,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         holder.icon.setImageResource(R.drawable.ic_heart);
 
         holder.itemView.setOnClickListener(view -> {
-            Intent i = new Intent(context, ContactProfileActivity.class);
+            Intent i = new Intent(view.getContext(), ContactProfileActivity.class);
             i.putExtra(ContactProfileActivity.KEY_USERID, user.getUserId());
             i.putExtra(ContactProfileActivity.KEY_USERNAME, user.getUserName());
-            context.startActivity(i);
+            view.getContext().startActivity(i);
         });
     }
 
