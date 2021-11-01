@@ -7,7 +7,12 @@
         android:id="@+id/contacts_search_button"
         android:icon="@drawable/ic_profile"
         android:title="Search"
-        android:contentDescription="content_description_search"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/contacts_add_button"
+        android:icon="@drawable/ic_profile"
+        android:title="Add"
         app:showAsAction="always" />
 
 </menu>

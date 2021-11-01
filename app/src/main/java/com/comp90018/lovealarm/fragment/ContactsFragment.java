@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +30,8 @@ import java.util.Objects;
 
 public class ContactsFragment extends Fragment {
     private TextInputEditText searchEdittext;
-    private View searchLocal;
+    private ActionMenuItemView searchLocalButton;
+    private ActionMenuItemView addContactButton;
     private RecyclerView recyclerView;
     private ExtendedFloatingActionButton requestButton;
 
@@ -59,8 +61,13 @@ public class ContactsFragment extends Fragment {
             return false;
         });
 
-        searchLocal = view.findViewById(R.id.contacts_search_button);
-        searchLocal.setOnClickListener(v -> doSearch());
+        searchLocalButton = view.findViewById(R.id.contacts_search_button);
+        searchLocalButton.setOnClickListener(v -> doSearch());
+
+        addContactButton = view.findViewById(R.id.contacts_add_button);
+        addContactButton.setOnClickListener(v -> {
+            // TODO
+        });
 
         requestButton = view.findViewById(R.id.contacts_request_button);
         requestButton.hide();
