@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.activity.ContactProfileActivity;
 import com.comp90018.lovealarm.model.User;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +59,17 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         User user = list.get(position);
+        // load username
         holder.text.setText(user.getUserName());
-        // TODO: Change image
-        holder.icon.setImageResource(R.drawable.ic_heart);
+        // load avatar
+        if (!"".equals(user.getAvatarName().trim())) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            StorageReference image = storageReference.child("avatars/" + user.getAvatarName());
+            image.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(holder.icon));
+        } else {
+            // set default avatar
+            holder.icon.setImageResource(R.drawable.ic_avatar);
+        }
 
         holder.itemView.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), ContactProfileActivity.class);
