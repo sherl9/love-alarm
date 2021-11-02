@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -160,6 +161,7 @@ public class ContactProfileActivity extends AppCompatActivity {
                                 user.getContactRequestIdList().add(currentUserId);
                                 users.child(userId).setValue(user);
                             }
+                            Toast.makeText(this, "Request sent", Toast.LENGTH_SHORT).show();
                         }
                     }));
                 }
