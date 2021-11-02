@@ -2,6 +2,7 @@ package com.comp90018.lovealarm.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,12 @@ import com.comp90018.lovealarm.activity.MainActivity;
 import com.comp90018.lovealarm.activity.MessageActivity;
 import com.comp90018.lovealarm.model.Chat;
 import com.comp90018.lovealarm.model.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -106,7 +111,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.voicePlayerView.setAudio(chat.getMessage());
         }
         holder.sentTime.setText(chat.getDate());
-        holder.profileImage.setImageResource(R.mipmap.ic_launcher);
+        // TODO: Change image
+        if (imgURL.equals("")){
+            holder.profileImage.setImageResource(R.drawable.ic_heart);
+        }
+        else{
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            StorageReference image = storageReference.child("avatars/" + imgURL);
+            image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Picasso.get().load(uri).into(holder.profileImage);
+                }
+            });
+        }
 
 
     }
