@@ -220,7 +220,17 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateUserData() {
-        dbReference.child("Users").child(userId).setValue(currentUser);
+        dbReference.child("Users").child(userId).setValue(currentUser).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                updateUI();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("firebase", "user data udpate failed");
+            }
+        });
     }
 
     private void showAuthDialog() {
