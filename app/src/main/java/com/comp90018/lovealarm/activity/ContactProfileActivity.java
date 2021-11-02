@@ -24,6 +24,7 @@ public class ContactProfileActivity extends AppCompatActivity {
     public static final String KEY_USERNAME = "key_contact_profile_username";
     public static final String KEY_USERID = "key_contact_profile_userid";
     public static final String KEY_DATE_OF_BIRTH = "key_contact_profile_date_of_birth";
+    public static final String KEY_AVATAR_NAME = "key_contact_profile_avatar_name";
 
     private TextView usernameTextView;
     private TextView dateOfBirthTextView;
@@ -39,6 +40,7 @@ public class ContactProfileActivity extends AppCompatActivity {
         String username = intent.getStringExtra(KEY_USERNAME);
         String userId = intent.getStringExtra(KEY_USERID);
         String dateOfBirth = intent.getStringExtra(KEY_DATE_OF_BIRTH);
+        String avatarName = intent.getStringExtra(KEY_AVATAR_NAME);
 
         usernameTextView = findViewById(R.id.contact_profile_username);
         usernameTextView.setText(username);
@@ -48,21 +50,16 @@ public class ContactProfileActivity extends AppCompatActivity {
 
         button = findViewById(R.id.contact_profile_button);
 
+        avatar = findViewById(R.id.contact_profile_avatar);
+        // load avatar
+        if (!"".equals(avatarName.trim())) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+            StorageReference image = storageReference.child("avatars/" + avatarName);
+            image.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(avatar));
+        }
+
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
         String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-
-        avatar = findViewById(R.id.contact_profile_avatar);
-
-        // load avatar
-        users.child(userId).child("avatarName").get().addOnSuccessListener(dataSnapshot -> {
-            String avatarName = dataSnapshot.getValue(String.class);
-            assert avatarName != null;
-            if (!"".equals(avatarName.trim())) {
-                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-                StorageReference image = storageReference.child("avatars/" + avatarName);
-                image.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(avatar));
-            }
-        });
 
         users.child(currentUserId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
