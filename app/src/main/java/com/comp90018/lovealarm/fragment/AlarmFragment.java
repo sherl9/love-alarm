@@ -53,21 +53,24 @@ public class AlarmFragment extends Fragment {
 
     LottieAnimationView lav_heart_origin;
     LottieAnimationView lav_heart_activated;
+    LottieAnimationView lav_heart_lover;
     TextView tv_admirersNum;
 
     private LocationListener locationListener;
     private LocationManager locationManager;
-    private final long MIN_TIME = 1000;
-    private final long MIN_DIST = 5;
-    private final long RANGE = 5;
-    private static final double EARTH_RADIUS = 6378.137;
-
 
     private String userId;
     private User user;
     private Coordinate userLocation;
+    private boolean isLoverNear;
+    private User lover = new User();
     private List <Coordinate> admirersLocations;
     private List <Coordinate> nearbyAdmirersLocations;
+
+    private final long MIN_TIME = 1000;
+    private final long MIN_DIST = 5;
+    private final long RANGE = 5;
+    private static final double EARTH_RADIUS = 6378.137;
 
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -131,6 +134,7 @@ public class AlarmFragment extends Fragment {
 
         lav_heart_origin = view.findViewById(R.id.heart_origin);
         lav_heart_activated = view.findViewById(R.id.heart_activated);
+        lav_heart_lover = view.findViewById(R.id.heart_lover);
         tv_admirersNum = view.findViewById(R.id.admirers_num);
 
         // ask for location permissions
@@ -153,41 +157,52 @@ public class AlarmFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
-                    Log.e("firebase", "Error getting data", task.getException());
+                    Log.e("firebase", "Error getting user data", task.getException());
                 }
                 else {
                     user = task.getResult().getValue(User.class);
                     admirersLocations.add(userLocation);
 
-                    // todo: for test, you can [1] uncomment the code below [2] set your location nearby "C9J5H968+JM" on the controller
-//                    List<String> list = new ArrayList<>();
-//                    list.add("GCRPrmtc1RQEpTEf9mHLh6ZocnA3");
-//                    list.add("kKA1sTUHWRT339gE3fGjEEk3p2F3");
-//                    user.setAdmirerIdList(list);
-
-                    // admirers locations setup
-                    dbRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    // determine if the person you like also likes you
+                    FirebaseDatabase.getInstance().getReference("Users").child(user.getAlertUserId()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DataSnapshot> task) {
                             if (!task.isSuccessful()) {
-                                Log.e("firebase", "Error getting data", task.getException());
-                            } else {
-                                // get all user locations
-                                HashMap<String, JSONObject> snapshotValue = (HashMap<String, JSONObject>) task.getResult().getValue();
-                                String jsonString = new Gson().toJson(snapshotValue.values());
-                                Gson gson = new Gson();
-                                List <Coordinate> userLocations = gson.fromJson(jsonString, new TypeToken<List<Coordinate>>(){}.getType());
-
-                                // get admirers locations
-                                for(Coordinate coordinate : userLocations) {
-                                    if (user.getAdmirerIdList().contains(coordinate.getUserId())) {
-                                        admirersLocations.add(coordinate);
-                                    }
+                                Log.e("firebase", "Error getting lover data", task.getException());
+                            }
+                            else {
+                                // get lover if there is one
+                                User alertUser = task.getResult().getValue(User.class);
+                                if(alertUser.getAlertUserId().equals(userId)) {
+                                    lover = alertUser;
                                 }
+
+                                // admirers locations setup
+                                dbRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                        if (!task.isSuccessful()) {
+                                            Log.e("firebase", "Error getting data", task.getException());
+                                        } else {
+                                            // get all user locations
+                                            HashMap<String, JSONObject> snapshotValue = (HashMap<String, JSONObject>) task.getResult().getValue();
+                                            String jsonString = new Gson().toJson(snapshotValue.values());
+                                            Gson gson = new Gson();
+                                            List <Coordinate> userLocations = gson.fromJson(jsonString, new TypeToken<List<Coordinate>>(){}.getType());
+
+                                            // get admirers locations
+                                            for(Coordinate coordinate : userLocations) {
+                                                if (user.getAdmirerIdList().contains(coordinate.getUserId())) {
+                                                    admirersLocations.add(coordinate);
+                                                }
+                                            }
+                                            getNearbyAdmirers(admirersLocations);
+                                        }
+                                    }
+                                });
                             }
                         }
                     });
-                    getNearbyAdmirers(admirersLocations);
                 }
             }
         });
@@ -230,6 +245,7 @@ public class AlarmFragment extends Fragment {
     public void getNearbyAdmirers(List <Coordinate> admirersLocations) {
         mMap.clear();
         nearbyAdmirersLocations.clear();
+        isLoverNear = false;
 
         // display markers on the map (not visible yet)
         for (Coordinate coordinate : admirersLocations) {
@@ -237,24 +253,34 @@ public class AlarmFragment extends Fragment {
             if(coordinate.getUserId().equals(userId)) {
                 mMap.addMarker(new MarkerOptions().position(latLng).title(coordinate.getUserId()));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                admirersLocations.remove(coordinate);
             } else if(getDistance(userLocation.getLongitude(), userLocation.getLatitude(), coordinate.getLongitude(), coordinate.getLatitude()) < RANGE){
                 nearbyAdmirersLocations.add(coordinate);
                 mMap.addMarker(new MarkerOptions().position(latLng).title(coordinate.getUserId()));
+                if (coordinate.getUserId().equals(lover.getUserId())) {
+                    isLoverNear = true;
+                }
             }
         }
-
         // update admirers number
         int admirersNum = nearbyAdmirersLocations.size();
         tv_admirersNum.setText(admirersNum+"");
 
         // update heart animation
+
         if (nearbyAdmirersLocations.size()>0) {
-            lav_heart_origin.setVisibility(View.INVISIBLE);
-            lav_heart_activated.setVisibility(View.VISIBLE);
+            if (isLoverNear) {
+                lav_heart_origin.setVisibility(View.INVISIBLE);
+                lav_heart_activated.setVisibility(View.INVISIBLE);
+                lav_heart_lover.setVisibility(View.VISIBLE); // animation with lover
+            } else {
+                lav_heart_origin.setVisibility(View.INVISIBLE);
+                lav_heart_activated.setVisibility(View.VISIBLE); // animation with admires
+                lav_heart_lover.setVisibility(View.INVISIBLE);
+            }
         } else {
-            lav_heart_origin.setVisibility(View.VISIBLE);
+            lav_heart_origin.setVisibility(View.VISIBLE); // animation without admires
             lav_heart_activated.setVisibility(View.INVISIBLE);
+            lav_heart_lover.setVisibility(View.INVISIBLE);
         }
     }
 
