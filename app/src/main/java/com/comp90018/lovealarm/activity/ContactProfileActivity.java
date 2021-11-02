@@ -2,6 +2,7 @@ package com.comp90018.lovealarm.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ public class ContactProfileActivity extends AppCompatActivity {
     private TextView usernameTextView;
     private TextView dateOfBirthTextView;
     private TextView bioTextView;
+    private TextView alertLabelTextView;
     private CircleImageView avatar;
     private Button button;
     private SwitchMaterial alertSwitch;
@@ -57,9 +59,13 @@ public class ContactProfileActivity extends AppCompatActivity {
         bioTextView = findViewById(R.id.contact_profile_bio);
         bioTextView.setText(bio);
 
+        alertLabelTextView = findViewById(R.id.contact_profile_label_set_alert);
+        alertLabelTextView.setVisibility(View.INVISIBLE);
+
         button = findViewById(R.id.contact_profile_button);
 
         alertSwitch = findViewById(R.id.contact_profile_set_alert);
+        alertSwitch.setVisibility(View.INVISIBLE);
 
         avatar = findViewById(R.id.contact_profile_avatar);
         // load avatar
@@ -77,39 +83,43 @@ public class ContactProfileActivity extends AppCompatActivity {
                 User currentUser = Objects.requireNonNull(task.getResult()).getValue(User.class);
                 assert currentUser != null;
 
-                // set alert switch
-                if (userId.equals(currentUser.getAlertUserId())) {
-                    alertSwitch.setChecked(true);
-                }
-
-                alertSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    // update current user
-                    currentUser.setAlertUserId(isChecked ? userId : "");
-                    users.child(currentUserId).setValue(currentUser);
-
-                    // update target user
-                    users.child(userId).get().addOnSuccessListener(dataSnapshot -> {
-                        User user = dataSnapshot.getValue(User.class);
-                        assert user != null;
-                        List<String> admirerIdList = user.getAdmirerIdList();
-                        if (isChecked) {
-                            if (!admirerIdList.contains(currentUserId)) {
-                                admirerIdList.add(currentUserId);
-                            }
-                        } else {
-                            admirerIdList.remove(currentUserId);
-                        }
-                        users.child(userId).setValue(user);
-                    });
-                });
-
-                // set button
                 if (currentUser.getContactIdList().contains(userId)) {
+                    // is contact
+                    // 1. set button
                     button.setText("Chat");
                     button.setOnClickListener(view -> {
                         Intent i = new Intent(ContactProfileActivity.this, MessageActivity.class);
                         i.putExtra("userid", userId);
                         startActivity(i);
+                    });
+
+                    // 2. set alert label and switch
+                    alertLabelTextView.setVisibility(View.VISIBLE);
+                    alertSwitch.setVisibility(View.VISIBLE);
+
+                    if (userId.equals(currentUser.getAlertUserId())) {
+                        alertSwitch.setChecked(true);
+                    }
+
+                    alertSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                        // update current user
+                        currentUser.setAlertUserId(isChecked ? userId : "");
+                        users.child(currentUserId).setValue(currentUser);
+
+                        // update target user
+                        users.child(userId).get().addOnSuccessListener(dataSnapshot -> {
+                            User user = dataSnapshot.getValue(User.class);
+                            assert user != null;
+                            List<String> admirerIdList = user.getAdmirerIdList();
+                            if (isChecked) {
+                                if (!admirerIdList.contains(currentUserId)) {
+                                    admirerIdList.add(currentUserId);
+                                }
+                            } else {
+                                admirerIdList.remove(currentUserId);
+                            }
+                            users.child(userId).setValue(user);
+                        });
                     });
                 } else if (currentUser.getContactRequestIdList().contains(userId)) {
                     button.setText("Accept");
