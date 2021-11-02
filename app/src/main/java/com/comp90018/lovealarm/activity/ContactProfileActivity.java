@@ -23,8 +23,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ContactProfileActivity extends AppCompatActivity {
     public static final String KEY_USERNAME = "key_contact_profile_username";
     public static final String KEY_USERID = "key_contact_profile_userid";
+    public static final String KEY_DATE_OF_BIRTH = "key_contact_profile_date_of_birth";
 
     private TextView usernameTextView;
+    private TextView dateOfBirthTextView;
     private CircleImageView avatar;
     private Button button;
 
@@ -36,9 +38,13 @@ public class ContactProfileActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String username = intent.getStringExtra(KEY_USERNAME);
         String userId = intent.getStringExtra(KEY_USERID);
+        String dateOfBirth = intent.getStringExtra(KEY_DATE_OF_BIRTH);
 
         usernameTextView = findViewById(R.id.contact_profile_username);
         usernameTextView.setText(username);
+
+        dateOfBirthTextView = findViewById(R.id.contact_profile_date_of_birth);
+        dateOfBirthTextView.setText(dateOfBirth);
 
         button = findViewById(R.id.contact_profile_button);
 

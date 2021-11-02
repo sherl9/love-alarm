@@ -46,7 +46,6 @@
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,9 +53,10 @@
                 android:id="@+id/contact_profile_label_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="32dp"
-                android:text="Name"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="64dp"
+                android:textSize="24sp"
+                android:text="Name:"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/contact_profile_avatar" />
 
@@ -65,8 +65,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:textSize="24sp"
                 app:layout_constraintBaseline_toBaselineOf="@+id/contact_profile_label_username"
                 app:layout_constraintStart_toEndOf="@+id/contact_profile_label_username" />
+
+            <TextView
+                android:id="@+id/contact_profile_label_date_of_birth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:textSize="24sp"
+                android:text="Date of birth:"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/contact_profile_username" />
+
+            <TextView
+                android:id="@+id/contact_profile_date_of_birth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textSize="24sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/contact_profile_label_date_of_birth"
+                app:layout_constraintStart_toEndOf="@+id/contact_profile_label_date_of_birth" />
 
             <Button
                 android:id="@+id/contact_profile_button"
