@@ -76,7 +76,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     @NonNull
     @Override
-    public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) { // view type, load xml
 
         if (viewType == MSG_TYPE_RIGHT_TEXT){
             View view = LayoutInflater.from(parent.getContext())
@@ -108,7 +108,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.showMessage.setText(chat.getMessage());
         }
         else if (chat.getType().equals("audio")){
-            holder.voicePlayerView.setAudio(chat.getMessage());
+            holder.voicePlayerView.setAudio(chat.getMessage()); // load media audio file
         }
         holder.sentTime.setText(chat.getDate());
         // TODO: Change image
@@ -135,7 +135,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(int position) { // left or right, test or audio
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         if (allChat.get(position).getSender().equals(fuser.getUid()) && allChat.get(position)
                 .getType().equals("text")){
@@ -150,7 +150,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             return MSG_TYPE_LEFT_TEXT;
         }
         else{
-            return MSG_TYPE_LEFT_AUDIO;
+            return MSG_TYPE_LEFT_AUDIO; // receiver audio
         }
     }
 }
