@@ -77,6 +77,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             i.putExtra(ContactProfileActivity.KEY_USERNAME, user.getUserName());
             i.putExtra(ContactProfileActivity.KEY_DATE_OF_BIRTH, user.getDob());
             i.putExtra(ContactProfileActivity.KEY_AVATAR_NAME, user.getAvatarName());
+            i.putExtra(ContactProfileActivity.KEY_BIO, user.getBio());
             view.getContext().startActivity(i);
         });
     }

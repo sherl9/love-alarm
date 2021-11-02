@@ -25,9 +25,11 @@ public class ContactProfileActivity extends AppCompatActivity {
     public static final String KEY_USERID = "key_contact_profile_userid";
     public static final String KEY_DATE_OF_BIRTH = "key_contact_profile_date_of_birth";
     public static final String KEY_AVATAR_NAME = "key_contact_profile_avatar_name";
+    public static final String KEY_BIO = "key_contact_profile_bio";
 
     private TextView usernameTextView;
     private TextView dateOfBirthTextView;
+    private TextView bioTextView;
     private CircleImageView avatar;
     private Button button;
 
@@ -41,12 +43,16 @@ public class ContactProfileActivity extends AppCompatActivity {
         String userId = intent.getStringExtra(KEY_USERID);
         String dateOfBirth = intent.getStringExtra(KEY_DATE_OF_BIRTH);
         String avatarName = intent.getStringExtra(KEY_AVATAR_NAME);
+        String bio = intent.getStringExtra(KEY_BIO);
 
         usernameTextView = findViewById(R.id.contact_profile_username);
         usernameTextView.setText(username);
 
         dateOfBirthTextView = findViewById(R.id.contact_profile_date_of_birth);
         dateOfBirthTextView.setText(dateOfBirth);
+
+        bioTextView = findViewById(R.id.contact_profile_bio);
+        bioTextView.setText(bio);
 
         button = findViewById(R.id.contact_profile_button);
 
