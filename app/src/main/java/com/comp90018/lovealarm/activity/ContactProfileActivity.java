@@ -12,14 +12,20 @@ import com.comp90018.lovealarm.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ContactProfileActivity extends AppCompatActivity {
     public static final String KEY_USERNAME = "key_contact_profile_username";
     public static final String KEY_USERID = "key_contact_profile_userid";
 
     private TextView usernameTextView;
+    private CircleImageView avatar;
     private Button button;
 
     @Override
@@ -38,6 +44,19 @@ public class ContactProfileActivity extends AppCompatActivity {
 
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
         String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+        avatar = findViewById(R.id.contact_profile_avatar);
+
+        // load avatar
+        users.child(userId).child("avatarName").get().addOnSuccessListener(dataSnapshot -> {
+            String avatarName = dataSnapshot.getValue(String.class);
+            assert avatarName != null;
+            if (!"".equals(avatarName.trim())) {
+                StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+                StorageReference image = storageReference.child("avatars/" + avatarName);
+                image.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(avatar));
+            }
+        });
 
         users.child(currentUserId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
