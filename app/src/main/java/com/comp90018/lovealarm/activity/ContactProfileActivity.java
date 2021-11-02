@@ -7,14 +7,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.model.User;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -79,10 +83,15 @@ public class ContactProfileActivity extends AppCompatActivity {
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
         String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
-        users.child(currentUserId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                User currentUser = Objects.requireNonNull(task.getResult()).getValue(User.class);
+        // Automatic update switch and button
+        users.child(currentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User currentUser = snapshot.getValue(User.class);
                 assert currentUser != null;
+
+                alertLabelTextView.setVisibility(View.INVISIBLE);
+                alertSwitch.setVisibility(View.INVISIBLE);
 
                 if (currentUser.getContactIdList().contains(userId)) {
                     // is contact
@@ -100,6 +109,8 @@ public class ContactProfileActivity extends AppCompatActivity {
 
                     if (userId.equals(currentUser.getAlertUserId())) {
                         alertSwitch.setChecked(true);
+                    } else {
+                        alertSwitch.setChecked(false);
                     }
 
                     alertSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -125,7 +136,6 @@ public class ContactProfileActivity extends AppCompatActivity {
                 } else if (currentUser.getContactRequestIdList().contains(userId)) {
                     button.setText("Accept");
                     button.setOnClickListener(view -> {
-                        // TODO: add friend
                         currentUser.getContactRequestIdList().remove(userId);
                         if (!currentUser.getContactIdList().contains(userId)) {
                             currentUser.getContactIdList().add(userId);
@@ -143,13 +153,6 @@ public class ContactProfileActivity extends AppCompatActivity {
                                 users.child(userId).setValue(user);
                             }
                         });
-
-                        button.setText("Chat");
-                        button.setOnClickListener(v -> {
-                            Intent i = new Intent(ContactProfileActivity.this, MessageActivity.class);
-                            i.putExtra("userid", userId);
-                            startActivity(i);
-                        });
                     });
                 } else {
                     button.setText("Add");
@@ -161,10 +164,15 @@ public class ContactProfileActivity extends AppCompatActivity {
                                 user.getContactRequestIdList().add(currentUserId);
                                 users.child(userId).setValue(user);
                             }
-                            Toast.makeText(this, "Request sent", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ContactProfileActivity.this, "Request sent", Toast.LENGTH_SHORT).show();
                         }
                     }));
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
