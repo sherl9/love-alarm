@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,11 +23,11 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class ContactsFragment extends Fragment {
@@ -95,23 +96,30 @@ public class ContactsFragment extends Fragment {
 //            users.child(currentUserId).setValue(currentUser);
 //        });
 
-        users.child(currentUserId).child("contactIdList").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                List<String> contactIdList = new ArrayList<>();
-                for (DataSnapshot child : Objects.requireNonNull(task.getResult()).getChildren()) {
-                    contactIdList.add(child.getValue(String.class));
-                }
+        // Update contact list automatically
+        users.child(currentUserId).child("contactIdList").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                contactsAdapter.getContactList().clear();
+                contactsAdapter.getList().clear();
 
-                for (String userId : contactIdList) {
-                    users.child(userId).get().addOnCompleteListener(task1 -> {
-                        if (task1.isSuccessful()) {
-                            User user = Objects.requireNonNull(task1.getResult()).getValue(User.class);
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String userId = child.getValue(String.class);
+                    assert userId != null;
+                    users.child(userId).get().addOnSuccessListener(dataSnapshot -> {
+                        synchronized (ContactsFragment.class) {
+                            User user = dataSnapshot.getValue(User.class);
                             contactsAdapter.getContactList().add(user);
                             contactsAdapter.getList().add(user);
                             recyclerView.setAdapter(contactsAdapter);
                         }
                     });
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
 
