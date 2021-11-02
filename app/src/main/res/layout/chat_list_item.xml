@@ -42,6 +42,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:text="test last message"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/contact_avatar"
         app:layout_constraintTop_toBottomOf="@+id/contact_name" />
