@@ -123,9 +123,12 @@ public class ContactsFragment extends Fragment {
             }
         });
 
-        users.child(currentUserId).child("contactRequestIdList").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DataSnapshot ignored : Objects.requireNonNull(task.getResult()).getChildren()) {
+        // Update request button automatically
+        users.child(currentUserId).child("contactRequestIdList").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                requestButton.hide();
+                for (DataSnapshot ignored : snapshot.getChildren()) {
                     requestButton.show();
                     requestButton.setOnClickListener(v -> {
                         Intent i = new Intent(v.getContext(), ContactRequestActivity.class);
@@ -133,6 +136,11 @@ public class ContactsFragment extends Fragment {
                     });
                     break;
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
