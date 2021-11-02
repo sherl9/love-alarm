@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.model.User;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -16,6 +17,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -32,6 +34,7 @@ public class ContactProfileActivity extends AppCompatActivity {
     private TextView bioTextView;
     private CircleImageView avatar;
     private Button button;
+    private SwitchMaterial alertSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,8 @@ public class ContactProfileActivity extends AppCompatActivity {
 
         button = findViewById(R.id.contact_profile_button);
 
+        alertSwitch = findViewById(R.id.contact_profile_set_alert);
+
         avatar = findViewById(R.id.contact_profile_avatar);
         // load avatar
         if (!"".equals(avatarName.trim())) {
@@ -72,6 +77,33 @@ public class ContactProfileActivity extends AppCompatActivity {
                 User currentUser = Objects.requireNonNull(task.getResult()).getValue(User.class);
                 assert currentUser != null;
 
+                // set alert switch
+                if (userId.equals(currentUser.getAlertUserId())) {
+                    alertSwitch.setChecked(true);
+                }
+
+                alertSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    // update current user
+                    currentUser.setAlertUserId(isChecked ? userId : "");
+                    users.child(currentUserId).setValue(currentUser);
+
+                    // update target user
+                    users.child(userId).get().addOnSuccessListener(dataSnapshot -> {
+                        User user = dataSnapshot.getValue(User.class);
+                        assert user != null;
+                        List<String> admirerIdList = user.getAdmirerIdList();
+                        if (isChecked) {
+                            if (!admirerIdList.contains(currentUserId)) {
+                                admirerIdList.add(currentUserId);
+                            }
+                        } else {
+                            admirerIdList.remove(currentUserId);
+                        }
+                        users.child(userId).setValue(user);
+                    });
+                });
+
+                // set button
                 if (currentUser.getContactIdList().contains(userId)) {
                     button.setText("Chat");
                     button.setOnClickListener(view -> {

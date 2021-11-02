@@ -88,9 +88,10 @@ public class ContactsFragment extends Fragment {
 //            User currentUser = dataSnapshot.getValue(User.class);
 //            assert currentUser != null;
 //            currentUser.getContactRequestIdList().clear();
-//            currentUser.getContactRequestIdList().add(currentUserId);
+//            currentUser.getContactRequestIdList().add("J66QfCpwjyg5MkfoVoKZj0kgvs93");
 //            currentUser.getContactIdList().clear();
-//            currentUser.getContactIdList().add(currentUserId);
+//            currentUser.getContactIdList().add("J66QfCpwjyg5MkfoVoKZj0kgvs93");
+//            currentUser.setAlertUserId("J66QfCpwjyg5MkfoVoKZj0kgvs93");
 //            users.child(currentUserId).setValue(currentUser);
 //        });
 
