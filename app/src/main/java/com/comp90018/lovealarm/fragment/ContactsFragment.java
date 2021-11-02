@@ -83,6 +83,17 @@ public class ContactsFragment extends Fragment {
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
         String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
+        // FIXME
+//        users.child(currentUserId).get().addOnSuccessListener(dataSnapshot -> {
+//            User currentUser = dataSnapshot.getValue(User.class);
+//            assert currentUser != null;
+//            currentUser.getContactRequestIdList().clear();
+//            currentUser.getContactRequestIdList().add(currentUserId);
+//            currentUser.getContactIdList().clear();
+//            currentUser.getContactIdList().add(currentUserId);
+//            users.child(currentUserId).setValue(currentUser);
+//        });
+
         users.child(currentUserId).child("contactIdList").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 List<String> contactIdList = new ArrayList<>();
