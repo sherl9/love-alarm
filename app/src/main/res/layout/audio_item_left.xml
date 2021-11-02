@@ -11,11 +11,14 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:id="@+id/profile_image"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@drawable/ic_avatar"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="0dp"
+            app:layout_constraintHorizontal_bias="0.498" />
 
         <me.jagar.chatvoiceplayerlibrary.VoicePlayerView
             android:id="@+id/voicePlayerView"

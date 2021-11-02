@@ -8,17 +8,22 @@
     android:background="?attr/selectableItemBackground"
     android:minHeight="?attr/minTouchTargetSize">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/contact_avatar"
         android:layout_width="32dp"
         android:layout_height="32dp"
+        android:src="@drawable/ic_avatar"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:scaleType="centerCrop"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="0dp"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/contact_name"
@@ -42,6 +47,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginBottom="8dp"
         android:text="test last message"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/contact_avatar"
         app:layout_constraintTop_toBottomOf="@+id/contact_name" />
