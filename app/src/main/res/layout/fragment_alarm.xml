@@ -33,13 +33,26 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/heart_activated" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/heart_lover"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="108dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/heart_lover" />
+
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="108dp"
-        android:layout_height="65dp"
+        android:layout_width="126dp"
+        android:layout_height="64dp"
         android:layout_marginTop="44dp"
         android:gravity="center"
-        android:text="Love Alert"
+        android:text="Love Alarm"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
