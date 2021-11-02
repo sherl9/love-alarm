@@ -266,7 +266,7 @@ public class MessageActivity extends AppCompatActivity {
                     chatRef.child("id").setValue(userid);
                 }
                 if (type.equals("audio")){
-                    chatRef.child("lastMessage").setValue("[audio message]");
+                    chatRef.child("lastMessage").setValue("[audio message]"); // audio X 2
                 }
                 else{
                     chatRef.child("lastMessage").setValue(message);
@@ -290,7 +290,7 @@ public class MessageActivity extends AppCompatActivity {
                     chatRef2.child("id").setValue(fuser.getUid());
                 }
                 if (type.equals("audio")){
-                    chatRef2.child("lastMessage").setValue("[audio message]");
+                    chatRef2.child("lastMessage").setValue("[audio message]"); // X2
                 }
                 else{
                     chatRef2.child("lastMessage").setValue(message);
@@ -381,12 +381,12 @@ public class MessageActivity extends AppCompatActivity {
             Task<Uri> audioUrl = success.getStorage().getDownloadUrl();
             audioUrl.addOnCompleteListener(path -> {
                 if (path.isSuccessful()) {
-                    String url = path.getResult().toString();
+                    String url = path.getResult().toString(); // url
                     Date now = new Date();
                     String strDateFormat = "MM-dd HH:mm:ss";
                     SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
                     String date = sdf.format(now);
-                    sendMessage(fuser.getUid(), userid, url, date, "audio");
+                    sendMessage(fuser.getUid(), userid, url, date, "audio"); // type == audio
 
                 }
             });
