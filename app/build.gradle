@@ -58,6 +58,10 @@ dependencies {
     // displaying voice message
     implementation 'com.github.JagarYousef:ChatVoicePlayer:1.1.0'
 
+    // pix gallery
+    implementation  'com.fxn769:pix:1.5.3'
+    // image compressor
+    implementation 'com.iceteck.silicompressorr:silicompressor:2.2.4'
 
     def lottieVersion = "4.2.0"
     implementation "com.airbnb.android:lottie:$lottieVersion"
