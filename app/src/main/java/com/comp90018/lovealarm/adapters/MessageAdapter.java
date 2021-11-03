@@ -35,6 +35,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public final TextView showMessage;
         public final TextView sentTime;
         public final VoicePlayerView voicePlayerView;
+        public final ImageView imageMessage;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -43,6 +44,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             showMessage = itemView.findViewById(R.id.show_message);
             sentTime = itemView.findViewById(R.id.sent_time);
             voicePlayerView = itemView.findViewById(R.id.voicePlayerView);
+            imageMessage = itemView.findViewById(R.id.img_message);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -64,6 +66,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     private static final int MSG_TYPE_RIGHT_TEXT = 1;
     private static final int MSG_TYPE_LEFT_AUDIO = 2;
     private static final int MSG_TYPE_RIGHT_AUDIO = 3;
+    private static final int MSG_TYPE_LEFT_IMAGE = 4;
+    private static final int MSG_TYPE_RIGHT_IMAGE = 5;
 
 
     public MessageAdapter(Context context, List<Chat> allChat, String imgURL) {
@@ -93,6 +97,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     .inflate(R.layout.chat_item_left, null, false);
             return new MessageAdapter.ViewHolder(view);
         }
+        else if (viewType == MSG_TYPE_LEFT_IMAGE){
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.img_item_left, null, false);
+            return new MessageAdapter.ViewHolder(view);
+        } //
+        else if (viewType == MSG_TYPE_RIGHT_IMAGE){
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.img_item_right, null, false);
+            return new MessageAdapter.ViewHolder(view);
+        } //
         else{
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.audio_item_left, null, false);
@@ -109,6 +123,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
         else if (chat.getType().equals("audio")){
             holder.voicePlayerView.setAudio(chat.getMessage()); // load media audio file
+        }
+        else if (chat.getType().equals("image")){
+//            StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+//            StorageReference image = storageReference.child("/Media/Images/");
+//            image.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                @Override
+//                public void onSuccess(Uri uri) {
+                    Picasso.get().load(chat.getMessage()).into(holder.imageMessage);
+//                }
+//            });
         }
         holder.sentTime.setText(chat.getDate());
         // TODO: Change image
@@ -148,6 +172,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         else if (allChat.get(position).getReceiver().equals(fuser.getUid()) && allChat.get(position)
                 .getType().equals("text")){
             return MSG_TYPE_LEFT_TEXT;
+        } else if (allChat.get(position).getSender().equals(fuser.getUid()) && allChat.get(position)
+                .getType().equals("image")){ //
+            return MSG_TYPE_RIGHT_IMAGE;
+        } else if (allChat.get(position).getReceiver().equals(fuser.getUid()) && allChat.get(position)
+                .getType().equals("image")){ //
+            return MSG_TYPE_LEFT_IMAGE;
         }
         else{
             return MSG_TYPE_LEFT_AUDIO; // receiver audio

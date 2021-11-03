@@ -12,11 +12,15 @@ import com.comp90018.lovealarm.R;
 import com.comp90018.lovealarm.adapters.MessageAdapter;
 import com.comp90018.lovealarm.model.Chat;
 import com.comp90018.lovealarm.model.User;
+import com.comp90018.lovealarm.services.SendMediaService;
 import com.devlomi.record_view.OnBasketAnimationEnd;
 import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
 import com.devlomi.record_view.RecordButton;
 import com.devlomi.record_view.RecordView;
+import com.fxn.pix.Options;
+import com.fxn.pix.Pix;
+import com.fxn.utility.PermUtil;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,12 +33,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.RecognizerIntent;
@@ -48,6 +54,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,10 +86,17 @@ public class MessageActivity extends AppCompatActivity {
     MediaRecorder audioRecorder;
     String audioPath;
     String[] permissions = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO};
+            Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA};
     List<String> mPermissionList = new ArrayList<>();
 
     private final int mRequestCode = 100;
+
+    // ***********
+    ImageView imageGallery;
+
+    private ArrayList<String> selectedImages;
+    // **********
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +108,12 @@ public class MessageActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         sendBtn = findViewById(R.id.btn_send);
         msgEditText = findViewById(R.id.text_send);
+
+        // ********* image file ************
+        imageGallery = findViewById(R.id.imgGallery);
+        imageGallery.setOnClickListener(view -> {
+            getGalleryImage();
+        });
 
         // voice recorder
         audioRecorder = new MediaRecorder();
@@ -225,14 +246,13 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String msg = msgEditText.getText().toString();
-                if (!msg.equals("")){
+                if (!msg.equals("")) {
                     Date now = new Date();
                     String strDateFormat = "MM-dd HH:mm:ss";
                     SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
                     String date = sdf.format(now);
                     sendMessage(fuser.getUid(), userid, msg, date, "text");
-                }
-                else{
+                } else {
                     Toast.makeText(MessageActivity.this, "You cannot send an empty message!", Toast.LENGTH_LONG);
                 }
                 msgEditText.setText("");
@@ -243,7 +263,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
-    private void sendMessage(String sender, String receiver, String message, String date,String type){
+    private void sendMessage(String sender, String receiver, String message, String date, String type) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -262,13 +282,12 @@ public class MessageActivity extends AppCompatActivity {
         chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists()){
+                if (!snapshot.exists()) {
                     chatRef.child("id").setValue(userid);
                 }
-                if (type.equals("audio")){
+                if (type.equals("audio")) {
                     chatRef.child("lastMessage").setValue("[audio message]"); // audio X 2
-                }
-                else{
+                } else {
                     chatRef.child("lastMessage").setValue(message);
                 }
                 chatRef.child("date").setValue(date);
@@ -286,13 +305,12 @@ public class MessageActivity extends AppCompatActivity {
         chatRef2.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!snapshot.exists()){
+                if (!snapshot.exists()) {
                     chatRef2.child("id").setValue(fuser.getUid());
                 }
-                if (type.equals("audio")){
+                if (type.equals("audio")) {
                     chatRef2.child("lastMessage").setValue("[audio message]"); // X2
-                }
-                else{
+                } else {
                     chatRef2.child("lastMessage").setValue(message);
                 }
                 chatRef2.child("date").setValue(date);
@@ -305,10 +323,9 @@ public class MessageActivity extends AppCompatActivity {
         });
 
 
-
     }
 
-    private void readMessage(final String myID, final String userID, final String imageURL){
+    private void readMessage(final String myID, final String userID, final String imageURL) {
 
         allChat = new ArrayList<>();
         reference = FirebaseDatabase.getInstance().getReference("Chats");
@@ -316,10 +333,10 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allChat.clear();
-                for (DataSnapshot childSnapshot : snapshot.getChildren()){
+                for (DataSnapshot childSnapshot : snapshot.getChildren()) {
                     Chat chat = childSnapshot.getValue(Chat.class);
                     if (chat.getReceiver().equals(myID) && chat.getSender().equals(userID) ||
-                    chat.getReceiver().equals(userID) && chat.getSender().equals(myID)){
+                            chat.getReceiver().equals(userID) && chat.getSender().equals(myID)) {
                         allChat.add(chat);
                     }
 
@@ -343,15 +360,15 @@ public class MessageActivity extends AppCompatActivity {
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(milliseconds)));
     }
 
-    private void initPermission(){
+    private void initPermission() {
         mPermissionList.clear();
-        for (int i = 0; i < permissions.length; i++){
+        for (int i = 0; i < permissions.length; i++) {
             if (ContextCompat.checkSelfPermission(MessageActivity.this, permissions[i]) !=
-                    PackageManager.PERMISSION_GRANTED){
+                    PackageManager.PERMISSION_GRANTED) {
                 mPermissionList.add(permissions[i]);
             }
         }
-        if (mPermissionList.size()>0){
+        if (mPermissionList.size() > 0) {
             // ask for permission
             ActivityCompat.requestPermissions(MessageActivity.this, permissions, mRequestCode);
         }
@@ -395,5 +412,59 @@ public class MessageActivity extends AppCompatActivity {
     }
 
 
+    // ******************** send image files ***************************
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 300) {
+            if (data != null) {
+                selectedImages = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
+
+                Intent intent = new Intent(MessageActivity.this, SendMediaService.class);
+                intent.putExtra("hisID", userid);
+                intent.putExtra("myID", fuser.getUid());
+                intent.putStringArrayListExtra("media", selectedImages);
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
+                    startForegroundService(intent);
+                else startService(intent);
+            }
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getGalleryImage();
+                } else {
+                    Toast.makeText(this, "Approve Pix Gallery permissions to select photos", Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
+    }
+
+    private void getGalleryImage() {
+
+        Options options = Options.init()
+                .setRequestCode(300)                                           //Request code for activity results
+                .setCount(5)                                                   //Number of images to restict selection count
+                .setFrontfacing(true)                                         //Front Facing camera on start
+                .setExcludeVideos(true)                                       //Option to exclude videos
+                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT);     //Orientaion
+                //.setPath(new ContextWrapper(getApplicationContext()).getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath());                                       //Custom Path For media Storage
+
+
+        if (selectedImages != null) {
+            options.setPreSelectedUrls(selectedImages);
+        }
+
+        Pix.start(this, options);
+    }
 
 }
