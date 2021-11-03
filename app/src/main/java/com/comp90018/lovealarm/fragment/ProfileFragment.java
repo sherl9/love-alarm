@@ -122,6 +122,7 @@ public class ProfileFragment extends Fragment {
         pb.setTitle("Updating");
         pb.setMessage("Wait while updating avatar...");
 
+
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,6 +196,11 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onSuccess(Uri uri) {
                     Picasso.get().load(uri).into(avatarImage);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("Downlaod", "download failed");
                 }
             });
         }
@@ -347,8 +353,8 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        pb.show();
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            pb.show();
             File f = new File(currentPhotoPath);
 //            avatarImage.setImageURI(Uri.fromFile(f));
             Log.d("tag", "Absolute url of image is" + Uri.fromFile(f));
@@ -360,6 +366,7 @@ public class ProfileFragment extends Fragment {
         }
 
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            pb.show();
             Uri contentUri = data.getData();
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_" + getFileExt(contentUri);
