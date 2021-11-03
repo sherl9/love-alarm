@@ -17,6 +17,9 @@ import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
 import com.devlomi.record_view.RecordButton;
 import com.devlomi.record_view.RecordView;
+import com.fxn.pix.Options;
+import com.fxn.pix.Pix;
+import com.fxn.utility.PermUtil;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,12 +32,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.RecognizerIntent;
@@ -48,6 +53,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,6 +90,16 @@ public class MessageActivity extends AppCompatActivity {
 
     private final int mRequestCode = 100;
 
+    // ***********
+    ImageView imageGallery;
+
+    private ArrayList<String> selectedImages;
+    // **********
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +110,12 @@ public class MessageActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         sendBtn = findViewById(R.id.btn_send);
         msgEditText = findViewById(R.id.text_send);
+
+        // ********* image file ************
+        imageGallery = findViewById(R.id.imgGallery);
+        imageGallery.setOnClickListener(view->{
+            getGalleryImage();
+        });
 
         // voice recorder
         audioRecorder = new MediaRecorder();
@@ -393,6 +416,53 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
+
+
+    // ******************** send image files ***************************
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 300) {
+            selectedImages = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NotNull String[] permissions, @NotNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case PermUtil.REQUEST_CODE_ASK_MULTIPLE_PERMISSIONS: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getGalleryImage();
+                } else {
+                    Toast.makeText(this, "Approve Pix Gallery permissions to select photos", Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
+    }
+
+    private void getGalleryImage() {
+
+        Options options = Options.init()
+                .setRequestCode(300)                                           //Request code for activity results
+                .setCount(5)                                                   //Number of images to restict selection count
+                .setFrontfacing(false)                                         //Front Facing camera on start
+                .setExcludeVideos(true)                                       //Option to exclude videos
+                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)     //Orientaion
+                .setPath("/ChatMe/Media");                                       //Custom Path For media Storage
+
+
+        if (selectedImages != null) {
+            options.setPreSelectedUrls(selectedImages);
+        }
+
+        Pix.start(this, options);
+    }
+
+
+
 
 
 
