@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="8dp"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_avatar"
+            app:civ_border_color="#FF000000"
+            app:civ_border_width="0dp"
+            app:layout_constraintHorizontal_bias="0.498" />
+
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_marginLeft="5dp"
+            android:padding="8dp"
+            android:background="@drawable/backgroud_left"
+            android:scaleType="fitCenter"
+            android:id="@+id/img_message" />
+
+        <TextView
+            android:id="@+id/sent_time"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/img_message"
+            android:paddingLeft="8dp"
+            android:text="10-20 20:20:20"
+            android:textAlignment="center"/>
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
