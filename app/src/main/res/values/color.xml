@@ -62,4 +62,6 @@
     <!--color on surface (light)-->
     <color name="black_900">#442C2E</color>
 
+    <color name="pink">#f1939c</color>
+
 </resources>
