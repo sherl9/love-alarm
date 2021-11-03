@@ -323,7 +323,7 @@ public class AlarmFragment extends Fragment {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 Boolean haveLover = (Boolean) (marker.getTag());
-                if(haveLover && lover != null) {
+                if(haveLover != null && haveLover && lover != null) {
                     Intent i = new Intent(getActivity().getApplication(), ContactProfileActivity.class);
                     i.putExtra(ContactProfileActivity.KEY_USERID, lover.getUserId());
                     i.putExtra(ContactProfileActivity.KEY_USERNAME, lover.getUserName());
