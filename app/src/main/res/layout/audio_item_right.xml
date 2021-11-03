@@ -26,22 +26,21 @@
             android:layout_marginRight="5dp"
             android:padding="2dp"
             app:enableVisualizer="false"
-            app:visualizationPlayedColor="#000"
-            app:visualizationNotPlayedColor="#F7CAC9"
             app:playPauseBackgroundColor="#F7CAC9"
-            app:timingBackgroundColor="#F7CAC9"
-            app:seekBarProgressColor="#615F5F"
-            app:showShareButton="false"
-            app:shareCornerRadius="60"
             app:playPauseCornerRadius="60"
-            app:showTiming="true"
-            app:viewCornerRadius="30"
-            app:viewBackground="#E6E5EA"
+            app:playProgressbarColor="#7C7B7B"
             app:progressTimeColor="#000"
+            app:seekBarProgressColor="#615F5F"
             app:seekBarThumbColor="#F7CAC9"
             app:shareBackgroundColor="#ff7700"
-            app:playProgressbarColor="#7C7B7B"
-            />
+            app:shareCornerRadius="60"
+            app:showShareButton="false"
+            app:showTiming="true"
+            app:timingBackgroundColor="#F7CAC9"
+            app:viewBackground="#E6E5EA"
+            app:viewCornerRadius="30"
+            app:visualizationNotPlayedColor="#F7CAC9"
+            app:visualizationPlayedColor="#000" />
 
 
         <TextView
