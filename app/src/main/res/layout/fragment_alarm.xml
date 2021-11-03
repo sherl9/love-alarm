@@ -31,18 +31,32 @@
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
+        android:visibility="invisible"
         app:lottie_rawRes="@raw/heart_activated" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/heart_lover"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="108dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        android:visibility="invisible"
+        app:lottie_rawRes="@raw/heart_lover" />
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="108dp"
-        android:layout_height="65dp"
-        android:layout_marginTop="44dp"
+        android:layout_width="199dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="60dp"
         android:gravity="center"
-        android:text="Love Alert"
-        android:textSize="24sp"
+        android:text="Love Alarm"
+        android:textSize="34sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -76,4 +90,16 @@
         android:layout_height="match_parent"
         android:visibility="gone"
         tools:context=".fragment.AlarmFragment" />
+
+    <ImageButton
+        android:id="@+id/btn_map"
+        android:layout_width="31dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_map"
+        tools:ignore="SpeakableTextPresentCheck" />
 </androidx.constraintlayout.widget.ConstraintLayout>

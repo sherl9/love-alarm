@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,11 +23,11 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class ContactsFragment extends Fragment {
@@ -83,17 +84,31 @@ public class ContactsFragment extends Fragment {
         DatabaseReference users = FirebaseDatabase.getInstance().getReference("Users");
         String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
-        users.child(currentUserId).child("contactIdList").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                List<String> contactIdList = new ArrayList<>();
-                for (DataSnapshot child : Objects.requireNonNull(task.getResult()).getChildren()) {
-                    contactIdList.add(child.getValue(String.class));
-                }
+        // FIXME
+//        users.child(currentUserId).get().addOnSuccessListener(dataSnapshot -> {
+//            User currentUser = dataSnapshot.getValue(User.class);
+//            assert currentUser != null;
+//            currentUser.getContactRequestIdList().clear();
+//            currentUser.getContactRequestIdList().add("J66QfCpwjyg5MkfoVoKZj0kgvs93");
+//            currentUser.getContactIdList().clear();
+//            currentUser.getContactIdList().add("J66QfCpwjyg5MkfoVoKZj0kgvs93");
+//            currentUser.setAlertUserId("J66QfCpwjyg5MkfoVoKZj0kgvs93");
+//            users.child(currentUserId).setValue(currentUser);
+//        });
 
-                for (String userId : contactIdList) {
-                    users.child(userId).get().addOnCompleteListener(task1 -> {
-                        if (task1.isSuccessful()) {
-                            User user = Objects.requireNonNull(task1.getResult()).getValue(User.class);
+        // Update contact list automatically
+        users.child(currentUserId).child("contactIdList").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                contactsAdapter.getContactList().clear();
+                contactsAdapter.getList().clear();
+
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String userId = child.getValue(String.class);
+                    assert userId != null;
+                    users.child(userId).get().addOnSuccessListener(dataSnapshot -> {
+                        synchronized (ContactsFragment.class) {
+                            User user = dataSnapshot.getValue(User.class);
                             contactsAdapter.getContactList().add(user);
                             contactsAdapter.getList().add(user);
                             recyclerView.setAdapter(contactsAdapter);
@@ -101,11 +116,19 @@ public class ContactsFragment extends Fragment {
                     });
                 }
             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
         });
 
-        users.child(currentUserId).child("contactRequestIdList").get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (DataSnapshot ignored : Objects.requireNonNull(task.getResult()).getChildren()) {
+        // Update request button automatically
+        users.child(currentUserId).child("contactRequestIdList").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                requestButton.hide();
+                for (DataSnapshot ignored : snapshot.getChildren()) {
                     requestButton.show();
                     requestButton.setOnClickListener(v -> {
                         Intent i = new Intent(v.getContext(), ContactRequestActivity.class);
@@ -113,6 +136,11 @@ public class ContactsFragment extends Fragment {
                     });
                     break;
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }

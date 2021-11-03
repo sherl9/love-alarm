@@ -9,7 +9,6 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,10 +45,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -60,8 +57,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ProfileFragment extends Fragment {
     public static final int CAMERA_PERM_CODE = 101;
@@ -126,6 +121,7 @@ public class ProfileFragment extends Fragment {
         pb = new ProgressDialog(getActivity());
         pb.setTitle("Updating");
         pb.setMessage("Wait while updating avatar...");
+
 
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -201,6 +197,11 @@ public class ProfileFragment extends Fragment {
                 public void onSuccess(Uri uri) {
                     Picasso.get().load(uri).into(avatarImage);
                 }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("Downlaod", "download failed");
+                }
             });
         }
         if (currentUser.getUserName() != null) nameField.setText(currentUser.getUserName());
@@ -225,21 +226,18 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateUserData() {
-        Map<String, Object> userValues = currentUser.toMap();
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/Users/" + userId, userValues);
-        dbReference.updateChildren(childUpdates, new DatabaseReference.CompletionListener() {
+        dbReference.child("Users").child(userId).setValue(currentUser).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                if(error == null){
-                    updateUI();
-                } else {
-                    Log.e("firebase", "db update failed");
-                }
+            public void onSuccess(Void unused) {
+                updateUI();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e("firebase", "user data udpate failed");
             }
         });
     }
-
 
     private void showAuthDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -355,8 +353,8 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        pb.show();
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            pb.show();
             File f = new File(currentPhotoPath);
 //            avatarImage.setImageURI(Uri.fromFile(f));
             Log.d("tag", "Absolute url of image is" + Uri.fromFile(f));
@@ -368,6 +366,7 @@ public class ProfileFragment extends Fragment {
         }
 
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            pb.show();
             Uri contentUri = data.getData();
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = "JPEG_" + timeStamp + "_" + getFileExt(contentUri);
