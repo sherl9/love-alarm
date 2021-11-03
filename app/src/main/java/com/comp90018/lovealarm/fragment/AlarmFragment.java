@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.comp90018.lovealarm.R;
+import com.comp90018.lovealarm.activity.ContactProfileActivity;
 import com.comp90018.lovealarm.model.Coordinate;
 import com.comp90018.lovealarm.model.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,6 +41,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -286,8 +289,9 @@ public class AlarmFragment extends Fragment {
                 nearbyAdmirersLocations.add(coordinate);
                 if (coordinate.getUserId().equals(lover.getUserId())) {
                     isLoverNear = true;
-                    mMap.addMarker(new MarkerOptions().position(latLng)
+                    Marker loverMarker = mMap.addMarker(new MarkerOptions().position(latLng)
                             .icon(BitmapFromVector(getActivity(), R.drawable.ic_marker_lover)));
+                    loverMarker.setTag(isLoverNear);
                 } else {
                     mMap.addMarker(new MarkerOptions().position(latLng)
                             .icon(BitmapFromVector(getActivity(), R.drawable.ic_marker_admirer)));
@@ -299,7 +303,6 @@ public class AlarmFragment extends Fragment {
         tv_admirersNum.setText(admirersNum+"");
 
         // update heart animation
-
         if (nearbyAdmirersLocations.size()>0) {
             if (isLoverNear) {
                 lav_heart_origin.setVisibility(View.INVISIBLE);
@@ -315,6 +318,23 @@ public class AlarmFragment extends Fragment {
             lav_heart_activated.setVisibility(View.INVISIBLE);
             lav_heart_lover.setVisibility(View.INVISIBLE);
         }
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Boolean haveLover = (Boolean) (marker.getTag());
+                if(haveLover && lover != null) {
+                    Intent i = new Intent(getActivity().getApplication(), ContactProfileActivity.class);
+                    i.putExtra(ContactProfileActivity.KEY_USERID, lover.getUserId());
+                    i.putExtra(ContactProfileActivity.KEY_USERNAME, lover.getUserName());
+                    i.putExtra(ContactProfileActivity.KEY_DATE_OF_BIRTH, lover.getDob());
+                    i.putExtra(ContactProfileActivity.KEY_AVATAR_NAME, lover.getAvatarName());
+                    i.putExtra(ContactProfileActivity.KEY_BIO, lover.getBio());
+                    startActivity(i);
+                }
+                return false;
+            }
+        });
     }
 
 
