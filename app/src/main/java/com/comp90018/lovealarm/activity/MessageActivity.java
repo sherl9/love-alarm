@@ -156,6 +156,11 @@ public class MessageActivity extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                sendBtn.setVisibility(View.GONE);
+                msgEditText.setVisibility(View.GONE);
+                imageGallery.setVisibility(View.GONE);
+                recordView.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -168,6 +173,11 @@ public class MessageActivity extends AppCompatActivity {
                 File file = new File(audioPath);
                 if (file.exists())
                     file.delete();
+
+                sendBtn.setVisibility(View.VISIBLE);
+                msgEditText.setVisibility(View.VISIBLE);
+                imageGallery.setVisibility(View.VISIBLE);
+                recordView.setVisibility(View.GONE);
 
             }
 
@@ -187,6 +197,11 @@ public class MessageActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                sendBtn.setVisibility(View.VISIBLE);
+                msgEditText.setVisibility(View.VISIBLE);
+                imageGallery.setVisibility(View.VISIBLE);
+                recordView.setVisibility(View.GONE);
+
                 sendRecodingMessage(audioPath);
             }
 
@@ -201,6 +216,12 @@ public class MessageActivity extends AppCompatActivity {
                 File file = new File(audioPath);
                 if (file.exists())
                     file.delete();
+
+
+                sendBtn.setVisibility(View.VISIBLE);
+                msgEditText.setVisibility(View.VISIBLE);
+                imageGallery.setVisibility(View.VISIBLE);
+                recordView.setVisibility(View.GONE);
             }
         });
 

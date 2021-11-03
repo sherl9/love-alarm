@@ -83,8 +83,8 @@
             android:id="@+id/btn_send"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_toLeftOf="@+id/record_button"
             android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/record_button"
             android:background="@drawable/ic_send"
             tools:ignore="SpeakableTextPresentCheck" />
 
