@@ -87,7 +87,7 @@ public class AlarmFragment extends Fragment {
 
     private final long MIN_TIME = 500;
     private final long MIN_DIST = 1;
-    private final long RANGE = 5;
+    private final double RANGE = 0.5;
     private static final double EARTH_RADIUS = 6378.137;
 
 
@@ -314,7 +314,7 @@ public class AlarmFragment extends Fragment {
         tv_admirersNum.setText(admirersNum+"");
 
         // notification sound
-        if (formerNum < admirersNum || isLoverNear) {
+        if (formerNum < admirersNum) {
             soundPool.play(1,1,1,0,0,1);
         }
 
