@@ -68,7 +68,6 @@ public class SendMediaService extends Service {
         MAX_PROGRESS = images.size();
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-//            Log.d("caoidhvooiahfhvi", "============================sdhvishnfiohnfvi");
             createChannel();
         }
 
@@ -76,9 +75,7 @@ public class SendMediaService extends Service {
 
         for (int a = 0; a < images.size(); a++) {
 
-//            String fileName = compressImage(images.get(a));
             String fileName = images.get(a);
-//            Log.i("ffffffffff gallery:", fileName);
             uploadImage(fileName);
             builder.setProgress(MAX_PROGRESS, a + 1, false);
             manager.notify(600, builder.build());
@@ -98,7 +95,7 @@ public class SendMediaService extends Service {
     private NotificationCompat.Builder getNotification() {
 
         builder = new NotificationCompat.Builder(this, "android")
-                .setContentText("Sending media")
+                .setContentText("Sending photos")
                 .setProgress(MAX_PROGRESS, 0, false)
                 .setAutoCancel(true)
                 .setWhen(System.currentTimeMillis())
@@ -117,29 +114,12 @@ public class SendMediaService extends Service {
         channel.setShowBadge(true);
         channel.setLightColor(R.color.colorPrimary);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-        channel.setDescription("Sending media");
+        channel.setDescription("Sending photos");
         manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.createNotificationChannel(channel);
 
     }
 
-//    private String compressImage(String fileName) {
-//
-//        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-////        File file = cw.getExternalFilesDir("love-alarm/media/"); // DCIM?
-//        File file = cw.getExternalFilesDir(Environment.DIRECTORY_PICTURES); // DCIM?
-////        File file = new File(dir, File.separator + System.currentTimeMillis() + ".3gp");
-//
-////        File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "love-alarm/media/");
-//
-//        if (!file.exists())
-//            file.mkdirs();
-//
-//        Log.i("fffffffffffffffffffff: ", fileName);
-//        String testPath = SiliCompressor.with(getApplicationContext()).compress(fileName, file);
-//        Log.i("fffffffffffffffffffff: ", testPath);
-//        return testPath;
-//    }
 
     private void uploadImage(String fileName) {
 
