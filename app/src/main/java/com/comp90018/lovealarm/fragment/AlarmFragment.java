@@ -264,6 +264,7 @@ public class AlarmFragment extends Fragment {
             }
         });
 
+        // show map
         btn_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -279,7 +280,7 @@ public class AlarmFragment extends Fragment {
         nearbyAdmirersLocations.clear();
         isLoverNear = false;
 
-        // display markers on the map (not visible yet)
+        // display markers and circle on the map
         for (Coordinate coordinate : admirersLocations) {
             LatLng latLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
             if(coordinate.getUserId().equals(userId)) {
@@ -334,6 +335,7 @@ public class AlarmFragment extends Fragment {
             lav_heart_lover.setVisibility(View.INVISIBLE);
         }
 
+        // if click lover marker, go to profile page (only for lover)
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -354,7 +356,7 @@ public class AlarmFragment extends Fragment {
 
 
 
-    // calculate the distance between two nodes based on their coodinates
+    // calculate the distance between two nodes based on their coordinates
     public static double getDistance(double longitude1, double latitude1, double longitude2, double latitude2) {
         double lat1 = Math.toRadians(latitude1);
         double lat2 = Math.toRadians(latitude2);
@@ -368,25 +370,13 @@ public class AlarmFragment extends Fragment {
         return s;
     }
 
+    // draw marker function
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
-        // below line is use to generate a drawable.
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
-
-        // below line is use to set bounds to our vector drawable.
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-
-        // below line is use to create a bitmap for our
-        // drawable which we have added.
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-
-        // below line is use to add bitmap in our canvas.
         Canvas canvas = new Canvas(bitmap);
-
-        // below line is use to draw our
-        // vector drawable in canvas.
         vectorDrawable.draw(canvas);
-
-        // after generating our bitmap we are returning our bitmap.
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
