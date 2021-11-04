@@ -314,7 +314,7 @@ public class AlarmFragment extends Fragment {
         tv_admirersNum.setText(admirersNum+"");
 
         // notification sound
-        if (formerNum < admirersNum || isLoverNear) {
+        if (formerNum < admirersNum) {
             soundPool.play(1,1,1,0,0,1);
         }
 
