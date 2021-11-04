@@ -1,9 +1,11 @@
 package com.comp90018.lovealarm.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.KeyEvent;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +30,7 @@ public class ContactAddActivity extends AppCompatActivity {
 
     private ContactsAdapter contactsAdapter;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,7 @@ public class ContactAddActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void doSearch() {
         contactsAdapter.getList().clear();
         recyclerView.setAdapter(contactsAdapter);
@@ -80,6 +84,7 @@ public class ContactAddActivity extends AppCompatActivity {
                                         && !contactIdList.contains(user.getUserId())
                                         && user.getUserName().toLowerCase().contains(keyword)) {
                                     contactsAdapter.getList().add(user);
+                                    contactsAdapter.sortList();
                                     recyclerView.setAdapter(contactsAdapter);
                                 }
                             }

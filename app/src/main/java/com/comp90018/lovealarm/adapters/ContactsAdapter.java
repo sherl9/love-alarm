@@ -1,6 +1,7 @@
 package com.comp90018.lovealarm.adapters;
 
 import android.content.Intent;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.comp90018.lovealarm.R;
@@ -18,6 +20,7 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
@@ -85,5 +88,15 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void sortList() {
+        list.sort(Comparator.comparing(u -> u.getUserName().toLowerCase()));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void sortContactList() {
+        contactList.sort(Comparator.comparing(u -> u.getUserName().toLowerCase()));
     }
 }
