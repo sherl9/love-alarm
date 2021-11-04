@@ -18,6 +18,9 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,6 +75,7 @@ public class AlarmFragment extends Fragment {
 
     private LocationListener locationListener;
     private LocationManager locationManager;
+    private SoundPool soundPool;
 
     private String userId;
     private User user;
@@ -155,6 +159,10 @@ public class AlarmFragment extends Fragment {
 
         // ask for location permissions
         ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+
+        //load sound
+        soundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
+        soundPool.load(getActivity(), R.raw.beep_2, 1);
 
         // hide the map
         mapFragment.getView().setVisibility(View.GONE);
@@ -298,9 +306,16 @@ public class AlarmFragment extends Fragment {
                 }
             }
         }
+
         // update admirers number
         int admirersNum = nearbyAdmirersLocations.size();
+        int formerNum = Integer.parseInt(tv_admirersNum.getText().toString());
         tv_admirersNum.setText(admirersNum+"");
+
+        // notification sound
+        if (formerNum < admirersNum || isLoverNear) {
+            soundPool.play(1,1,1,0,0,1);
+        }
 
         // update heart animation
         if (nearbyAdmirersLocations.size()>0) {
