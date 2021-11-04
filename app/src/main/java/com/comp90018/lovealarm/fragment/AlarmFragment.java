@@ -87,7 +87,7 @@ public class AlarmFragment extends Fragment {
 
     private final long MIN_TIME = 500;
     private final long MIN_DIST = 1;
-    private final long RANGE = 5;
+    private final double RANGE = 0.5;
     private static final double EARTH_RADIUS = 6378.137;
 
 
