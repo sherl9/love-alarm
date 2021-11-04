@@ -7,7 +7,7 @@
     android:background="?attr/selectableItemBackground"
     android:minHeight="?attr/minTouchTargetSize">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/contact_avatar"
         android:scaleType="centerCrop"
         android:layout_width="32dp"
