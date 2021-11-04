@@ -1,6 +1,7 @@
 package com.comp90018.lovealarm.fragment;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.KeyEvent;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -98,6 +100,7 @@ public class ContactsFragment extends Fragment {
 
         // Update contact list automatically
         users.child(currentUserId).child("contactIdList").addValueEventListener(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 contactsAdapter.getContactList().clear();
@@ -111,6 +114,8 @@ public class ContactsFragment extends Fragment {
                             User user = dataSnapshot.getValue(User.class);
                             contactsAdapter.getContactList().add(user);
                             contactsAdapter.getList().add(user);
+                            contactsAdapter.sortContactList();
+                            contactsAdapter.sortList();
                             recyclerView.setAdapter(contactsAdapter);
                         }
                     });
