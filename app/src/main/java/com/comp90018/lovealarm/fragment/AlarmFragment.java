@@ -18,6 +18,9 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,6 +75,7 @@ public class AlarmFragment extends Fragment {
 
     private LocationListener locationListener;
     private LocationManager locationManager;
+    private SoundPool soundPool;
 
     private String userId;
     private User user;
@@ -155,6 +159,10 @@ public class AlarmFragment extends Fragment {
 
         // ask for location permissions
         ActivityCompat.requestPermissions(requireActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PackageManager.PERMISSION_GRANTED);
+
+        //load sound
+        soundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
+        soundPool.load(getActivity(), R.raw.beep_2, 1);
 
         // hide the map
         mapFragment.getView().setVisibility(View.GONE);
@@ -256,6 +264,7 @@ public class AlarmFragment extends Fragment {
             }
         });
 
+        // show map
         btn_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -271,7 +280,7 @@ public class AlarmFragment extends Fragment {
         nearbyAdmirersLocations.clear();
         isLoverNear = false;
 
-        // display markers on the map (not visible yet)
+        // display markers and circle on the map
         for (Coordinate coordinate : admirersLocations) {
             LatLng latLng = new LatLng(coordinate.getLatitude(), coordinate.getLongitude());
             if(coordinate.getUserId().equals(userId)) {
@@ -298,9 +307,16 @@ public class AlarmFragment extends Fragment {
                 }
             }
         }
+
         // update admirers number
         int admirersNum = nearbyAdmirersLocations.size();
+        int formerNum = Integer.parseInt(tv_admirersNum.getText().toString());
         tv_admirersNum.setText(admirersNum+"");
+
+        // notification sound
+        if (formerNum < admirersNum || isLoverNear) {
+            soundPool.play(1,1,1,0,0,1);
+        }
 
         // update heart animation
         if (nearbyAdmirersLocations.size()>0) {
@@ -319,6 +335,7 @@ public class AlarmFragment extends Fragment {
             lav_heart_lover.setVisibility(View.INVISIBLE);
         }
 
+        // if click lover marker, go to profile page (only for lover)
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -339,7 +356,7 @@ public class AlarmFragment extends Fragment {
 
 
 
-    // calculate the distance between two nodes based on their coodinates
+    // calculate the distance between two nodes based on their coordinates
     public static double getDistance(double longitude1, double latitude1, double longitude2, double latitude2) {
         double lat1 = Math.toRadians(latitude1);
         double lat2 = Math.toRadians(latitude2);
@@ -353,25 +370,13 @@ public class AlarmFragment extends Fragment {
         return s;
     }
 
+    // draw marker function
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
-        // below line is use to generate a drawable.
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
-
-        // below line is use to set bounds to our vector drawable.
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-
-        // below line is use to create a bitmap for our
-        // drawable which we have added.
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-
-        // below line is use to add bitmap in our canvas.
         Canvas canvas = new Canvas(bitmap);
-
-        // below line is use to draw our
-        // vector drawable in canvas.
         vectorDrawable.draw(canvas);
-
-        // after generating our bitmap we are returning our bitmap.
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
