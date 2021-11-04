@@ -246,7 +246,7 @@ public class AlarmFragment extends Fragment {
                     for (Coordinate coordinate : userLocations) {
                         if (user.getAdmirerIdList().contains(coordinate.getUserId()) || userId.equals(coordinate.getUserId())) {
                             for (int i=0;i<admirersLocations.size();i++) {
-                                if (admirersLocations.get(i).equals(coordinate.getUserId())) {
+                                if (admirersLocations.get(i).getUserId().equals(coordinate.getUserId())) {
                                     admirersLocations.set(i,coordinate);
                                 }
                             }
@@ -292,7 +292,6 @@ public class AlarmFragment extends Fragment {
                         .fillColor(Color.argb(50, 241, 147, 156)));
                 mMap.addMarker(new MarkerOptions().position(latLng).title("You")
                         .icon(BitmapFromVector(getActivity(), R.drawable.ic_marker_my)));
-
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
             } else if(getDistance(userLocation.getLongitude(), userLocation.getLatitude(), coordinate.getLongitude(), coordinate.getLatitude()) < RANGE){
                 nearbyAdmirersLocations.add(coordinate);
